@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*
-This module implements a entry into the OpenSDS CLI service.
+This module implements a entry into the OpenSDS multi-cloud CLI service.
 
 */
 
@@ -24,7 +24,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/opensds/opensds/osdsctl/cli"
+	"github.com/opensds/multi-cloud/osdsmcctl/cli"
 )
 
 func main() {
