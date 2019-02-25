@@ -16,6 +16,8 @@ package client
 
 import (
 	"log"
+
+	"github.com/opensds/multi-cloud/api/pkg/filters/context"
 )
 
 const (
@@ -31,7 +33,8 @@ type Client struct {
 
 // Config is a struct that defines some options for calling the Client.
 type Config struct {
-	Endpoint string
+	Endpoint    string
+	AuthOptions AuthOptions
 }
 
 // NewClient method creates a new Client.
@@ -42,12 +45,24 @@ func NewClient(c *Config) *Client {
 		log.Printf("Warnning: OpenSDS multi-cloud endpoint is not specified using the default value(%s)", c.Endpoint)
 	}
 
-	r := NewReceiver()
+	var r Receiver
+	switch c.AuthOptions.(type) {
+	case *NoAuthOptions:
+		r = NewReceiver()
+	case *KeystoneAuthOptions:
+		r = NewKeystoneReciver(c.AuthOptions.(*KeystoneAuthOptions))
+	default:
+		log.Printf("Warnning: Not support auth options, use default")
+		r = NewReceiver()
+		c.AuthOptions = NewNoauthOptions(context.DefaultTenantId)
+	}
+
+	t := c.AuthOptions.GetTenantId()
 
 	return &Client{
 		cfg: c,
 
-		BackendMgr: NewBackendMgr(r, c.Endpoint),
+		BackendMgr: NewBackendMgr(r, c.Endpoint, t),
 	}
 }
 

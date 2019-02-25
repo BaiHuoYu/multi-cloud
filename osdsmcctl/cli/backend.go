@@ -36,12 +36,19 @@ var backendShowCommand = &cobra.Command{
 	Run:   backendShowAction,
 }
 
+var backendListCommand = &cobra.Command{
+	Use:   "list",
+	Short: "list all backends in the multi-cloud",
+	Run:   backendListAction,
+}
+
 var (
 	backendId string
 )
 
 func init() {
 	backendCommand.AddCommand(backendShowCommand)
+	backendCommand.AddCommand(backendListCommand)
 }
 
 func backendAction(cmd *cobra.Command, args []string) {
@@ -52,6 +59,16 @@ func backendAction(cmd *cobra.Command, args []string) {
 func backendShowAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 	resp, err := client.GetBackend(args[0])
+	if err != nil {
+		Fatalln(HttpErrStrip(err))
+	}
+	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
+	PrintDict(resp, keys, FormatterList{})
+}
+
+func backendListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args,0)
+	resp, err := client.ListBackends()
 	if err != nil {
 		Fatalln(HttpErrStrip(err))
 	}

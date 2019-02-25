@@ -20,12 +20,16 @@ package cli
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
+	"github.com/golang/glog"
+	"github.com/opensds/multi-cloud/api/pkg/filters/context"
 	c "github.com/opensds/multi-cloud/client"
 	"github.com/opensds/opensds/pkg/utils"
 	"github.com/spf13/cobra"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var (
@@ -40,7 +44,17 @@ var (
 		},
 	}
 	Debug bool
+
+	DockerComposePath        = "DOCKER_COMPOSE_PATH"
+	DefaultDockerComposePath = "/root/gopath/src/github.com/opensds/multi-cloud/docker-compose.yml"
 )
+
+type DockerComposeAPI struct {
+	Image       string   `yaml:"image"`
+	Volumes     []string `yaml:"volumes"`
+	Ports       []string `yaml:"ports"`
+	Environment []string `yaml:"environment"`
+}
 
 func init() {
 	rootCommand.AddCommand(backendCommand)
@@ -63,6 +77,27 @@ func (writer DebugWriter) Write(data []byte) (n int, err error) {
 	return len(data), nil
 }
 
+func GetAPIEnvs() []string {
+	path, ok := os.LookupEnv(DockerComposePath)
+	if !ok {
+		path = DefaultDockerComposePath
+	}
+
+	ymlFile, err := ioutil.ReadFile(path)
+	if err != nil {
+		glog.Errorf("Read config yaml file (%s) failed, reason:(%v)", path, err)
+		return nil
+	}
+
+	apiConf := &DockerComposeAPI{}
+	if err = yaml.Unmarshal(ymlFile, apiConf); err != nil {
+		glog.Errorf("Parse error: %v", err)
+		return nil
+	}
+
+	return apiConf.Environment
+}
+
 // Run method indicates how to start a cli tool through cobra.
 func Run() error {
 	if !utils.Contained("--debug", os.Args) {
@@ -78,6 +113,18 @@ func Run() error {
 	}
 
 	cfg := &c.Config{Endpoint: ep}
+	APIEnvs := GetAPIEnvs()
+	authStrategy := c.GetValueFromStrArray(APIEnvs, "OS_AUTH_AUTHSTRATEGY")
+
+	switch authStrategy {
+	case c.Keystone:
+		cfg.AuthOptions = c.LoadKeystoneAuthOptions(APIEnvs)
+	case c.Noauth:
+		cfg.AuthOptions = c.NewNoauthOptions(context.NoAuthAdminTenantId)
+	default:
+		cfg.AuthOptions = c.NewNoauthOptions(context.DefaultTenantId)
+	}
+
 	client = c.NewClient(cfg)
 
 	return rootCommand.Execute()

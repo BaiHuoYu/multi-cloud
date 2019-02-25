@@ -21,10 +21,11 @@ import (
 )
 
 // NewBackendMgr
-func NewBackendMgr(r Receiver, edp string) *BackendMgr {
+func NewBackendMgr(r Receiver, edp string, tenantId string) *BackendMgr {
 	return &BackendMgr{
 		Receiver: r,
 		Endpoint: edp,
+		TenantId: tenantId,
 	}
 }
 
@@ -53,8 +54,22 @@ func generateURL(resource string, tenantId string, in ...string) string {
 	return strings.Join(value, "/")
 }
 
-// CreateVolume
+// GetVolume
 func (b *BackendMgr) GetBackend(Id string) (*backend.GetBackendResponse, error) {
+	var res backend.GetBackendResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		generateURL("backends", b.TenantId, Id)}, "/")
+
+	if err := b.Recv(url, "GET", nil, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// ListBackends
+func (b *BackendMgr) ListBackends() (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,

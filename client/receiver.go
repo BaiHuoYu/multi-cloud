@@ -24,7 +24,12 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/httplib"
-	"github.com/opensds/opensds/pkg/model"
+	"github.com/gophercloud/gophercloud"
+	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
+	"github.com/opensds/multi-cloud/api/pkg/model"
+	"github.com/opensds/multi-cloud/api/pkg/utils"
+	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
 )
 
 func NewHttpError(code int, msg string) error {
@@ -112,6 +117,71 @@ type receiver struct{}
 
 func (*receiver) Recv(url string, method string, input interface{}, output interface{}) error {
 	return request(url, method, nil, input, output)
+}
+
+func NewKeystoneReciver(auth *KeystoneAuthOptions) Receiver {
+	k := &KeystoneReciver{Auth: auth}
+	k.GetToken()
+	return k
+}
+
+type KeystoneReciver struct {
+	Auth *KeystoneAuthOptions
+}
+
+func (k *KeystoneReciver) GetToken() error {
+	opts := gophercloud.AuthOptions{
+		IdentityEndpoint: k.Auth.IdentityEndpoint,
+		Username:         k.Auth.Username,
+		UserID:           k.Auth.UserID,
+		Password:         k.Auth.Password,
+		DomainID:         k.Auth.DomainID,
+		DomainName:       k.Auth.DomainName,
+		TenantID:         k.Auth.TenantID,
+		TenantName:       k.Auth.TenantName,
+		AllowReauth:      k.Auth.AllowReauth,
+	}
+
+	provider, err := openstack.AuthenticatedClient(opts)
+	if err != nil {
+		return fmt.Errorf("When get auth client: %v", err)
+	}
+
+	// Only support keystone v3
+	identity, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{})
+	if err != nil {
+		return fmt.Errorf("When get identity session: %v", err)
+	}
+	r := tokens.Create(identity, &opts)
+	token, err := r.ExtractToken()
+	if err != nil {
+		return fmt.Errorf("When get extract token session: %v", err)
+	}
+	project, err := r.ExtractProject()
+	if err != nil {
+		return fmt.Errorf("When get extract project session: %v", err)
+	}
+	k.Auth.TenantID = project.ID
+	k.Auth.TokenID = token.ID
+	return nil
+}
+
+func (k *KeystoneReciver) Recv(url string, method string, body interface{}, output interface{}) error {
+	desc := fmt.Sprintf("%s %s", method, url)
+	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
+		if retryIdx > 0 {
+			err, ok := lastErr.(*HttpError)
+			if ok && err.Code == http.StatusUnauthorized {
+				k.GetToken()
+			} else {
+				return lastErr
+			}
+		}
+
+		headers := HeaderOption{}
+		headers[constants.AuthTokenHeader] = k.Auth.TokenID
+		return request(url, method, headers, body, output)
+	})
 }
 
 func checkHTTPResponseStatusCode(resp *http.Response) error {
