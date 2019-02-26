@@ -48,11 +48,50 @@ var (
 	DefaultDockerComposePath = "/root/gopath/src/github.com/opensds/multi-cloud/docker-compose.yml"
 )
 
-type DockerComposeAPI struct {
-	Image       string   `yaml:"image"`
-	Volumes     []string `yaml:"volumes"`
-	Ports       []string `yaml:"ports"`
-	Environment []string `yaml:"environment"`
+type DockerCompose struct {
+	Version  string `yaml:"version"`
+	Services struct {
+		Zookeeper struct {
+			Image string   `yaml:"image"`
+			Ports []string `yaml:"ports"`
+		} `yaml:"zookeeper"`
+		Kafka struct {
+			Image       string   `yaml:"image"`
+			Ports       []string `yaml:"ports"`
+			Environment []string `yaml:"environment"`
+			Volumes     []string `yaml:"volumes"`
+			DependsOn   []string `yaml:"depends_on"`
+		} `yaml:"kafka"`
+		API struct {
+			Image       string   `yaml:"image"`
+			Volumes     []string `yaml:"volumes"`
+			Ports       []string `yaml:"ports"`
+			Environment []string `yaml:"environment"`
+		} `yaml:"api"`
+		Backend struct {
+			Image       string   `yaml:"image"`
+			Environment []string `yaml:"environment"`
+		} `yaml:"backend"`
+		S3 struct {
+			Image       string   `yaml:"image"`
+			Environment []string `yaml:"environment"`
+		} `yaml:"s3"`
+		Dataflow struct {
+			Image       string   `yaml:"image"`
+			Environment []string `yaml:"environment"`
+			DependsOn   []string `yaml:"depends_on"`
+		} `yaml:"dataflow"`
+		Datamover struct {
+			Image       string   `yaml:"image"`
+			Volumes     []string `yaml:"volumes"`
+			Environment []string `yaml:"environment"`
+			DependsOn   []string `yaml:"depends_on"`
+		} `yaml:"datamover"`
+		Datastore struct {
+			Image string   `yaml:"image"`
+			Ports []string `yaml:"ports"`
+		} `yaml:"datastore"`
+	} `yaml:"services"`
 }
 
 func init() {
@@ -89,15 +128,15 @@ func GetAPIEnvs() []string {
 		return nil
 	}
 
-	apiConf := &DockerComposeAPI{}
-	if err = yaml.Unmarshal(ymlFile, apiConf); err != nil {
+	DockerComposeConf := &DockerCompose{}
+	if err = yaml.Unmarshal(ymlFile, DockerComposeConf); err != nil {
 		log.Printf("Parse error: %v", err)
 		return nil
 	}
 
-	fmt.Printf("apiConf  Environment(%s)", apiConf.Environment)
-	log.Printf("apiConf  Environment(%s)", apiConf.Environment)
-	return apiConf.Environment
+	fmt.Printf("apiConf  Environment(%+v),+++(%+v)", DockerComposeConf, DockerComposeConf.Services.API.Environment)
+	log.Printf("apiConf  Environment(%s)", DockerComposeConf.Services.API.Environment)
+	return DockerComposeConf.Services.API.Environment
 }
 
 // Run method indicates how to start a cli tool through cobra.
