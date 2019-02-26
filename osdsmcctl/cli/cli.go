@@ -121,7 +121,7 @@ func GetAPIEnvs() []string {
 		path = DefaultDockerComposePath
 		log.Printf("Config yaml file (%s)", path)
 	}
-	fmt.Printf("Config yaml file (%s)", path)
+
 	ymlFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Printf("Read config yaml file (%s) failed, reason:(%v)", path, err)
@@ -134,7 +134,6 @@ func GetAPIEnvs() []string {
 		return nil
 	}
 
-	fmt.Printf("apiConf  Environment(%+v),+++(%+v)", DockerComposeConf, DockerComposeConf.Services.API.Environment)
 	log.Printf("apiConf  Environment(%s)", DockerComposeConf.Services.API.Environment)
 	return DockerComposeConf.Services.API.Environment
 }
