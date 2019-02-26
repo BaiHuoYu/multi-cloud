@@ -82,14 +82,13 @@ func GetAPIEnvs() []string {
 
 	ymlFile, err := ioutil.ReadFile(path)
 	if err != nil {
-		//log.Printf("Read config yaml file (%s) failed, reason:(%v)", path, err)
+		log.Printf("Read config yaml file (%s) failed, reason:(%v)", path, err)
 		return nil
 	}
 
 	apiConf := &DockerComposeAPI{}
 	if err = yaml.Unmarshal(ymlFile, apiConf); err != nil {
-		//log.Printf("Parse error: %v", err)
-
+		log.Printf("Parse error: %v", err)
 		return nil
 	}
 
@@ -97,15 +96,14 @@ func GetAPIEnvs() []string {
 }
 
 // Run method indicates how to start a cli tool through cobra.
-func Run() error {
-	fmt.Print("103-------------------------")
-	//if !utils.Contained("--debug", os.Args) {
-	//	log.SetOutput(DummyWriter{})
-	//} else {
-	//	log.SetOutput(DebugWriter{})
-	//}
+func Run() error {	
+	if !utils.Contained("--debug", os.Args) {
+		log.SetOutput(DummyWriter{})
+	} else {
+		log.SetOutput(DebugWriter{})
+	}
 
-	fmt.Print("110-------------------------")
+	
 	ep, ok := os.LookupEnv(c.MultiCloudEndpoint)
 	if !ok {
 		return fmt.Errorf("ERROR: You must provide the endpoint by setting " +
