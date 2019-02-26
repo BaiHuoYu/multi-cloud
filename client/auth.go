@@ -15,9 +15,8 @@
 package client
 
 import (
+	"log"
 	"strings"
-
-	"github.com/golang/glog"
 )
 
 const (
@@ -75,14 +74,14 @@ func GetValueFromStrArray(strArray []string, key string) string {
 			if len(authArray) > 1 {
 				value = authArray[1]
 			} else {
-				glog.Errorf("There is no value in %+v ", key)
+				log.Printf("There is no value in %+v ", key)
 			}
 
 			break
 		}
 	}
 
-	glog.Errorf("There is no %+v in %+v ", key, strArray)
+	log.Printf("There is no %+v in %+v ", key, strArray)
 	return value
 }
 
