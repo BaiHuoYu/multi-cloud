@@ -25,8 +25,8 @@ import (
 	"os"
 
 	"github.com/opensds/multi-cloud/api/pkg/filters/context"
+	"github.com/opensds/multi-cloud/api/pkg/utils"
 	c "github.com/opensds/multi-cloud/client"
-	"github.com/opensds/opensds/pkg/utils"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
 )
