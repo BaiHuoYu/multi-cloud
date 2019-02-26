@@ -21,9 +21,11 @@ package cli
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/opensds/multi-cloud/api/pkg/filters/context"
+	"github.com/opensds/multi-cloud/api/pkg/utils"
 	c "github.com/opensds/multi-cloud/client"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
@@ -96,14 +98,13 @@ func GetAPIEnvs() []string {
 }
 
 // Run method indicates how to start a cli tool through cobra.
-func Run() error {	
+func Run() error {
 	if !utils.Contained("--debug", os.Args) {
 		log.SetOutput(DummyWriter{})
 	} else {
 		log.SetOutput(DebugWriter{})
 	}
 
-	
 	ep, ok := os.LookupEnv(c.MultiCloudEndpoint)
 	if !ok {
 		return fmt.Errorf("ERROR: You must provide the endpoint by setting " +
