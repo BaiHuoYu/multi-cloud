@@ -24,7 +24,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/golang/glog"
 	"github.com/opensds/multi-cloud/api/pkg/filters/context"
 	c "github.com/opensds/multi-cloud/client"
 	"github.com/opensds/opensds/pkg/utils"
@@ -85,13 +84,14 @@ func GetAPIEnvs() []string {
 
 	ymlFile, err := ioutil.ReadFile(path)
 	if err != nil {
-		glog.Errorf("Read config yaml file (%s) failed, reason:(%v)", path, err)
+		log.Printf("Read config yaml file (%s) failed, reason:(%v)", path, err)
 		return nil
 	}
 
 	apiConf := &DockerComposeAPI{}
 	if err = yaml.Unmarshal(ymlFile, apiConf); err != nil {
-		glog.Errorf("Parse error: %v", err)
+		log.Printf("Parse error: %v", err)
+
 		return nil
 	}
 
