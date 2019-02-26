@@ -13,8 +13,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/opensds/opensds/pkg/model"
 )
 
 type bd struct {
@@ -196,15 +194,15 @@ func parseDict(u interface{}, keys KeyList, fmts FormatterList) (
 		v = v.Elem()
 	}
 
-	bv := v.FieldByName("BaseModel")
-	if bv.Kind() != reflect.Invalid {
-		bm := bv.Interface().(*model.BaseModel)
-		bmHead := getHead(bm, keys)
-		bmRow := getRow(bm, keys, fmts)
-		for i := 0; i < len(bmHead); i++ {
-			rows = appendRow(rows, []string{bmHead[i], bmRow[i]})
-		}
-	}
+	//bv := v.FieldByName("BaseModel")
+	//if bv.Kind() != reflect.Invalid {
+	//	bm := bv.Interface().(*model.BaseModel)
+	//	bmHead := getHead(bm, keys)
+	//	bmRow := getRow(bm, keys, fmts)
+	//	for i := 0; i < len(bmHead); i++ {
+	//		rows = appendRow(rows, []string{bmHead[i], bmRow[i]})
+	//	}
+	//}
 
 	head := getHead(u, keys)
 	row := getRow(u, keys, fmts)
@@ -245,17 +243,17 @@ func parseList(slice interface{}, keys KeyList, fmts FormatterList) (
 		head := getHead(u, keys)
 		row := getRow(u, keys, fmts)
 
-		bv := v.FieldByName("BaseModel")
-		if bv.Kind() != reflect.Invalid {
-			bm := bv.Interface().(*model.BaseModel)
-			bmHead := getHead(bm, keys)
-			bmRow := getRow(bm, keys, fmts)
-			coln = mergeStrSlice(bmHead, head)
-			rows = appendRow(rows, mergeStrSlice(bmRow, row))
-		} else {
-			coln = head
-			rows = appendRow(rows, row)
-		}
+		//bv := v.FieldByName("BaseModel")
+		//if bv.Kind() != reflect.Invalid {
+		//	bm := bv.Interface().(*model.BaseModel)
+		//	bmHead := getHead(bm, keys)
+		//	bmRow := getRow(bm, keys, fmts)
+		//	coln = mergeStrSlice(bmHead, head)
+		//	rows = appendRow(rows, mergeStrSlice(bmRow, row))
+		//} else {
+		coln = head
+		rows = appendRow(rows, row)
+		//}
 	}
 	if len(coln) == 0 {
 		coln = keys
