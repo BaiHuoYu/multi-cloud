@@ -100,14 +100,14 @@ func GetAPIEnvs() []string {
 
 // Run method indicates how to start a cli tool through cobra.
 func Run() error {
-	fmt.Fprintf("103-------------------------")
+	fmt.Print("103-------------------------")
 	if !utils.Contained("--debug", os.Args) {
 		log.SetOutput(DummyWriter{})
 	} else {
 		log.SetOutput(DebugWriter{})
 	}
 
-	fmt.Fprintf("110-------------------------")
+	fmt.Print("110-------------------------")
 	ep, ok := os.LookupEnv(c.MultiCloudEndpoint)
 	if !ok {
 		return fmt.Errorf("ERROR: You must provide the endpoint by setting " +
