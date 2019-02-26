@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	c "github.com/opensds/opensds/client"
+	c "github.com/opensds/multi-cloud/client"
 	"github.com/spf13/cobra"
 )
 
