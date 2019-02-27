@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Huawei Technologies Co., Ltd. All Rights Reserved.
+// Copyright (c) 2019 Huawei Technologies Co., Ltd. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,15 +144,17 @@ func Run() error {
 		log.SetOutput(DebugWriter{})
 	}
 
-	ep, ok := os.LookupEnv(c.MultiCloudEndpoint)
+	ip, ok := os.LookupEnv(c.MultiCloudIP)
 	if !ok {
-		return fmt.Errorf("ERROR: You must provide the endpoint by setting " +
-			"the environment variable MULTI_CLOUD_ENDPOINT")
+		return fmt.Errorf("ERROR: You must provide the ip by setting " +
+			"the environment variable MULTI_CLOUD_IP")
 	}
 
-	cfg := &c.Config{Endpoint: ep}
 	APIEnvs := GetAPIEnvs()
-	authStrategy := c.GetValueFromStrArray(APIEnvs, "OS_AUTH_AUTHSTRATEGY")
+	cfg := &c.Config{
+		Endpoint: "http://" + ip + c.GetValueFromStrArray(APIEnvs, c.MicroServerAddress),
+	}
+	authStrategy := c.GetValueFromStrArray(APIEnvs, c.OsAuthAuthstrategy)
 
 	switch authStrategy {
 	case c.Keystone:

@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Huawei Technologies Co., Ltd. All Rights Reserved.
+// Copyright (c) 2019 Huawei Technologies Co., Ltd. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,11 +20,19 @@ import (
 )
 
 const (
-	//Opensds Auth ENVs
-	OsAuthStrategy = "OS_AUTH_STRATEGY"
-
+	// The values of OS_AUTH_AUTHSTRATEGY
 	Keystone = "keystone"
 	Noauth   = "noauth"
+
+	// Api environment variable name in docker-compose.yml
+	MicroServerAddress = "MICRO_SERVER_ADDRESS"
+	OsAuthAuthstrategy = "OS_AUTH_AUTHSTRATEGY"
+	OsAuthURL          = "OS_AUTH_URL"
+	OsUserName         = "OS_USERNAME"
+	OsPassword         = "OS_PASSWORD"
+	OsTenantName       = "OS_TENANT_NAME"
+	OsProjectName      = "OS_PROJECT_NAME"
+	OsUserDominID      = "OS_USER_DOMIN_ID"
 )
 
 type AuthOptions interface {
@@ -87,14 +95,15 @@ func GetValueFromStrArray(strArray []string, key string) string {
 
 func LoadKeystoneAuthOptions(envs []string) *KeystoneAuthOptions {
 	opt := NewKeystoneAuthOptions()
-	opt.IdentityEndpoint = GetValueFromStrArray(envs, "OS_AUTH_URL")
-	opt.Username = GetValueFromStrArray(envs, "OS_USERNAME")
-	opt.Password = GetValueFromStrArray(envs, "OS_PASSWORD")
-	opt.TenantName = GetValueFromStrArray(envs, "OS_TENANT_NAME")
-	projectName := GetValueFromStrArray(envs, "OS_PROJECT_NAME")
-	opt.DomainID = GetValueFromStrArray(envs, "OS_USER_DOMIN_ID")
+	opt.IdentityEndpoint = GetValueFromStrArray(envs, OsAuthURL)
+	opt.Username = GetValueFromStrArray(envs, OsUserName)
+	opt.Password = GetValueFromStrArray(envs, OsPassword)
+	opt.TenantName = GetValueFromStrArray(envs, OsTenantName)
+	projectName := GetValueFromStrArray(envs, OsProjectName)
+	opt.DomainID = GetValueFromStrArray(envs, OsUserDominID)
 	if opt.TenantName == "" {
 		opt.TenantName = projectName
 	}
+
 	return opt
 }

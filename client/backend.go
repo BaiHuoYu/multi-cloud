@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Huawei Technologies Co., Ltd. All Rights Reserved.
+// Copyright (c) 2019 Huawei Technologies Co., Ltd. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,30 +36,12 @@ type BackendMgr struct {
 	TenantId string
 }
 
-func CurrentVersion() string {
-	return "v1"
-}
-
-func generateURL(resource string, tenantId string, in ...string) string {
-	// If project id is not specified, ignore it.
-	if tenantId == "" {
-		value := []string{CurrentVersion(), resource}
-		value = append(value, in...)
-		return strings.Join(value, "/")
-	}
-
-	value := []string{CurrentVersion(), tenantId, resource}
-	value = append(value, in...)
-
-	return strings.Join(value, "/")
-}
-
-// GetVolume
+// GetBackend
 func (b *BackendMgr) GetBackend(Id string) (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,
-		generateURL("backends", b.TenantId, Id)}, "/")
+		GenerateBackendURL(b.TenantId, Id)}, "/")
 
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
 		return nil, err
@@ -73,7 +55,7 @@ func (b *BackendMgr) ListBackends() (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,
-		generateURL("backends", b.TenantId)}, "/")
+		GenerateBackendURL(b.TenantId)}, "/")
 
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
 		return nil, err

@@ -28,6 +28,6 @@ const (
 	AuthTokenHeader    = "X-Auth-Token"
 	SubjectTokenHeader = "X-Subject-Token"
 
-	// OpenSDS current api version
-	APIVersion = "v1beta"
+	// OpenSDS multi-cloud current api version
+	APIVersion = "v1"
 )

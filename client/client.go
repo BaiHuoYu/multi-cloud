@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	MultiCloudEndpoint = "MULTI_CLOUD_ENDPOINT"
+	MultiCloudIP = "MULTI_CLOUD_IP"
 )
 
 // Client is a struct for exposing some operations of resources.
@@ -37,9 +37,9 @@ type Config struct {
 	AuthOptions AuthOptions
 }
 
-// NewClient method creates a new Client.
+// NewClient creates a new Client.
 func NewClient(c *Config) *Client {
-	// If endpoint field not specified,use the default value localhost.
+	// If endpoint field not specified, use the default value localhost.
 	if c.Endpoint == "" {
 		c.Endpoint = "http://localhost:8089"
 		log.Printf("Warnning: OpenSDS multi-cloud endpoint is not specified using the default value(%s)", c.Endpoint)
@@ -58,16 +58,8 @@ func NewClient(c *Config) *Client {
 	}
 
 	t := c.AuthOptions.GetTenantId()
-
 	return &Client{
-		cfg: c,
-
+		cfg:        c,
 		BackendMgr: NewBackendMgr(r, c.Endpoint, t),
 	}
-}
-
-// Reset method is defined to clean Client struct.
-func (c *Client) Reset() *Client {
-	c = &Client{}
-	return c
 }
