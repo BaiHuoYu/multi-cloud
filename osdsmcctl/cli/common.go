@@ -1,4 +1,4 @@
-// Copyright (c) 2018 Huawei Technologies Co., Ltd. All Rights Reserved.
+// Copyright (c) 2019 Huawei Technologies Co., Ltd. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,10 +28,12 @@ const (
 	warnPrefix  = "WARNING:"
 )
 
+// Printf implementation
 func Printf(format string, a ...interface{}) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, format, a...)
 }
 
+// Debugf implementation
 func Debugf(format string, a ...interface{}) (n int, err error) {
 	if Debug {
 		return fmt.Fprintf(os.Stdout, debugPrefix+" "+format, a...)
@@ -39,23 +41,28 @@ func Debugf(format string, a ...interface{}) (n int, err error) {
 	return 0, nil
 }
 
+// Warnf implementation
 func Warnf(format string, a ...interface{}) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, warnPrefix+" "+format, a...)
 }
 
+// Errorf implementation
 func Errorf(format string, a ...interface{}) (n int, err error) {
 	return fmt.Fprintf(os.Stderr, errorPrefix+" "+format, a...)
 }
 
+// Fatalf implementation
 func Fatalf(format string, a ...interface{}) {
 	fmt.Fprintf(os.Stderr, errorPrefix+" "+format, a...)
 	os.Exit(-1)
 }
 
+// Println implementation
 func Println(a ...interface{}) (n int, err error) {
 	return fmt.Fprintln(os.Stdout, a...)
 }
 
+// Debugln implementation
 func Debugln(a ...interface{}) (n int, err error) {
 	if Debug {
 		a = append([]interface{}{debugPrefix}, a...)
@@ -64,31 +71,35 @@ func Debugln(a ...interface{}) (n int, err error) {
 	return 0, nil
 }
 
+// Warnln implementation
 func Warnln(a ...interface{}) (n int, err error) {
 	a = append([]interface{}{warnPrefix}, a...)
 	return fmt.Fprintln(os.Stdout, a...)
 }
 
+// Errorln implementation
 func Errorln(a ...interface{}) (n int, err error) {
 	a = append([]interface{}{errorPrefix}, a...)
 	return fmt.Fprintln(os.Stderr, a...)
 }
 
+// Fatalln implementation
 func Fatalln(a ...interface{}) {
 	a = append([]interface{}{errorPrefix}, a...)
 	fmt.Fprintln(os.Stderr, a...)
 	os.Exit(-1)
 }
 
-// Strip some redundant message from client http error.
-func HttpErrStrip(err error) error {
-	if httpErr, ok := err.(*c.HttpError); ok {
+// HTTPErrStrip Strip some redundant message from client http error.
+func HTTPErrStrip(err error) error {
+	if httpErr, ok := err.(*c.HTTPError); ok {
 		httpErr.Decode()
 		return fmt.Errorf(httpErr.Msg)
 	}
 	return err
 }
 
+// ArgsNumCheck implementation
 func ArgsNumCheck(cmd *cobra.Command, args []string, invalidNum int) {
 	if len(args) != invalidNum {
 		Errorln("The number of args is not correct!")

@@ -20,28 +20,28 @@ import (
 	"github.com/opensds/multi-cloud/backend/proto"
 )
 
-// NewBackendMgr
-func NewBackendMgr(r Receiver, edp string, tenantId string) *BackendMgr {
+// NewBackendMgr implementation
+func NewBackendMgr(r Receiver, edp string, tenantID string) *BackendMgr {
 	return &BackendMgr{
 		Receiver: r,
 		Endpoint: edp,
-		TenantId: tenantId,
+		TenantID: tenantID,
 	}
 }
 
-// BackendMgr
+// BackendMgr implementation
 type BackendMgr struct {
 	Receiver
 	Endpoint string
-	TenantId string
+	TenantID string
 }
 
-// GetBackend
-func (b *BackendMgr) GetBackend(Id string) (*backend.GetBackendResponse, error) {
+// GetBackend implementation
+func (b *BackendMgr) GetBackend(ID string) (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateBackendURL(b.TenantId, Id)}, "/")
+		GenerateBackendURL(b.TenantID, ID)}, "/")
 
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
 		return nil, err
@@ -50,12 +50,12 @@ func (b *BackendMgr) GetBackend(Id string) (*backend.GetBackendResponse, error) 
 	return &res, nil
 }
 
-// ListBackends
+// ListBackends implementation
 func (b *BackendMgr) ListBackends() (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateBackendURL(b.TenantId)}, "/")
+		GenerateBackendURL(b.TenantID)}, "/")
 
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
 		return nil, err

@@ -20,43 +20,50 @@ import (
 	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
 )
 
-func GenerateBackendURL(tenantId string, in ...string) string {
-	return generateURL("backends", tenantId, in...)
+// GenerateBackendURL implementation
+func GenerateBackendURL(tenantID string, in ...string) string {
+	return generateURL("backends", tenantID, in...)
 }
 
-func GenerateTypeURL(tenantId string, in ...string) string {
-	return generateURL("types", tenantId, in...)
+// GenerateTypeURL implementation
+func GenerateTypeURL(tenantID string, in ...string) string {
+	return generateURL("types", tenantID, in...)
 }
 
-func GeneratePlanURL(tenantId string, in ...string) string {
-	return generateURL("plans", tenantId, in...)
+// GeneratePlanURL implementation
+func GeneratePlanURL(tenantID string, in ...string) string {
+	return generateURL("plans", tenantID, in...)
 }
 
-func GenerateJobURL(tenantId string, in ...string) string {
-	return generateURL("jobs", tenantId, in...)
+// GenerateJobURL implementation
+func GenerateJobURL(tenantID string, in ...string) string {
+	return generateURL("jobs", tenantID, in...)
 }
 
-func GeneratePolicyURL(tenantId string, in ...string) string {
-	return generateURL("policies", tenantId, in...)
+// GeneratePolicyURL implementation
+func GeneratePolicyURL(tenantID string, in ...string) string {
+	return generateURL("policies", tenantID, in...)
 }
 
-func GenerateS3URL(tenantId string, in ...string) string {
-	return generateURL("s3", tenantId, in...)
+// GenerateS3URL implementation
+func GenerateS3URL(tenantID string, in ...string) string {
+	return generateURL("s3", tenantID, in...)
 }
 
+// CurrentVersion implementation
 func CurrentVersion() string {
 	return constants.APIVersion
 }
 
-func generateURL(resource string, tenantId string, in ...string) string {
+func generateURL(resource string, tenantID string, in ...string) string {
 	// If project id is not specified, ignore it.
-	if tenantId == "" {
+	if tenantID == "" {
 		value := []string{CurrentVersion(), resource}
 		value = append(value, in...)
 		return strings.Join(value, "/")
 	}
 
-	value := []string{CurrentVersion(), tenantId, resource}
+	value := []string{CurrentVersion(), tenantID, resource}
 	value = append(value, in...)
 
 	return strings.Join(value, "/")

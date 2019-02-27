@@ -20,29 +20,40 @@ import (
 )
 
 const (
-	// The values of OS_AUTH_AUTHSTRATEGY
+	// Keystone value of OS_AUTH_AUTHSTRATEGY
 	Keystone = "keystone"
-	Noauth   = "noauth"
+	// Noauth value of OS_AUTH_AUTHSTRATEGY
+	Noauth = "noauth"
 
-	// Api environment variable name in docker-compose.yml
+	// MicroServerAddress Api environment variable name in docker-compose.yml
 	MicroServerAddress = "MICRO_SERVER_ADDRESS"
+	// OsAuthAuthstrategy Api environment variable name in docker-compose.yml
 	OsAuthAuthstrategy = "OS_AUTH_AUTHSTRATEGY"
-	OsAuthURL          = "OS_AUTH_URL"
-	OsUserName         = "OS_USERNAME"
-	OsPassword         = "OS_PASSWORD"
-	OsTenantName       = "OS_TENANT_NAME"
-	OsProjectName      = "OS_PROJECT_NAME"
-	OsUserDominID      = "OS_USER_DOMIN_ID"
+	// OsAuthURL Api environment variable name in docker-compose.yml
+	OsAuthURL = "OS_AUTH_URL"
+	// OsUserName Api environment variable name in docker-compose.yml
+	OsUserName = "OS_USERNAME"
+	// OsPassword Api environment variable name in docker-compose.yml
+	OsPassword = "OS_PASSWORD"
+	// OsTenantName Api environment variable name in docker-compose.yml
+	OsTenantName = "OS_TENANT_NAME"
+	// OsProjectName Api environment variable name in docker-compose.yml
+	OsProjectName = "OS_PROJECT_NAME"
+	// OsUserDominID Api environment variable name in docker-compose.yml
+	OsUserDominID = "OS_USER_DOMIN_ID"
 )
 
+// AuthOptions Auth Options
 type AuthOptions interface {
-	GetTenantId() string
+	GetTenantID() string
 }
 
+// NewKeystoneAuthOptions implementation
 func NewKeystoneAuthOptions() *KeystoneAuthOptions {
 	return &KeystoneAuthOptions{}
 }
 
+// KeystoneAuthOptions implementation
 type KeystoneAuthOptions struct {
 	IdentityEndpoint string
 	Username         string
@@ -56,22 +67,27 @@ type KeystoneAuthOptions struct {
 	TokenID          string
 }
 
-func (k *KeystoneAuthOptions) GetTenantId() string {
+// GetTenantID Get TenantId
+func (k *KeystoneAuthOptions) GetTenantID() string {
 	return k.TenantID
 }
 
-func NewNoauthOptions(tenantId string) *NoAuthOptions {
-	return &NoAuthOptions{TenantID: tenantId}
+// NewNoauthOptions implementation
+func NewNoauthOptions(tenantID string) *NoAuthOptions {
+	return &NoAuthOptions{TenantID: tenantID}
 }
 
+// NoAuthOptions implementation
 type NoAuthOptions struct {
 	TenantID string
 }
 
-func (n *NoAuthOptions) GetTenantId() string {
+// GetTenantID implementation
+func (n *NoAuthOptions) GetTenantID() string {
 	return n.TenantID
 }
 
+// GetValueFromStrArray implementation
 func GetValueFromStrArray(strArray []string, key string) string {
 	value := ""
 
@@ -93,6 +109,7 @@ func GetValueFromStrArray(strArray []string, key string) string {
 	return value
 }
 
+// LoadKeystoneAuthOptions implementation
 func LoadKeystoneAuthOptions(envs []string) *KeystoneAuthOptions {
 	opt := NewKeystoneAuthOptions()
 	opt.IdentityEndpoint = GetValueFromStrArray(envs, OsAuthURL)

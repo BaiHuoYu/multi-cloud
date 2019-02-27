@@ -29,34 +29,41 @@ type bd struct {
 	UR rune // BOX DRAWINGS UP AND RIGHT
 }
 
+// FormatterList implementation
 type FormatterList map[string]func(v interface{}) string
+
+// KeyList implementation
 type KeyList []string
+
+// StructElemCb implementation
 type StructElemCb func(name string, value reflect.Value) error
 
 var m = bd{'-', '|', '+', '+', '+', '+', '+', '+', '+', '+', '+'}
 
-func JsonFormatter(v interface{}) string {
+// JSONFormatter implementation
+func JSONFormatter(v interface{}) string {
 	b, _ := json.MarshalIndent(v, "", " ")
 	return string(b)
 }
 
-// Output formats slice of structs data and writes to standard output.(Using box drawing characters)
+// PrintList Output formats slice of structs data and writes to standard output.(Using box drawing characters)
 func PrintList(slice interface{}, keys KeyList, fmts FormatterList) {
 	fmt.Println(TableList(slice, keys, fmts))
 }
 
+// PrintDict implementation
 func PrintDict(u interface{}, keys KeyList, fmts FormatterList) {
 	fmt.Println(TableDict(u, keys, fmts))
 }
 
-// Table formats slice of structs data and returns the resulting string.(Using box drawing characters)
+// TableList Table formats slice of structs data and returns the resulting string.(Using box drawing characters)
 func TableList(slice interface{}, keys KeyList, fmts FormatterList) string {
 	coln, colw, rows := parseList(slice, keys, fmts)
 	table := table(coln, colw, rows, m)
 	return table
 }
 
-// Table formats slice of structs data and returns the resulting string.(Using standard ascii characters)
+// TableDict Table formats slice of structs data and returns the resulting string.(Using standard ascii characters)
 func TableDict(u interface{}, keys KeyList, fmts FormatterList) string {
 	coln, colw, rows := parseDict(u, keys, fmts)
 	table := table(coln, colw, rows, m)

@@ -42,12 +42,19 @@ var (
 			os.Exit(1)
 		},
 	}
-	Debug bool
 
-	DockerComposePath        = "DOCKER_COMPOSE_PATH"
+	// Debug Is it Debug?
+	Debug bool
+	// DockerComposePath The name of the environment variable used to set the
+	// path to docker-compose.yml
+	DockerComposePath = "DOCKER_COMPOSE_PATH"
+	// DefaultDockerComposePath The default value of the environment variable DOCKER_COMPOSE_PATH
 	DefaultDockerComposePath = "/root/gopath/src/github.com/opensds/multi-cloud/docker-compose.yml"
+	// MultiCloudIP The name of the environment variable used to set ip
+	MultiCloudIP = "MULTI_CLOUD_IP"
 )
 
+// DockerCompose implementation
 type DockerCompose struct {
 	Version  string `yaml:"version"`
 	Services struct {
@@ -100,6 +107,7 @@ func init() {
 	flags.BoolVar(&Debug, "debug", false, "shows debugging output.")
 }
 
+// DummyWriter implementation
 type DummyWriter struct{}
 
 // do nothing
@@ -107,6 +115,7 @@ func (writer DummyWriter) Write(data []byte) (n int, err error) {
 	return len(data), nil
 }
 
+// DebugWriter implementation
 type DebugWriter struct{}
 
 // do nothing
@@ -115,6 +124,7 @@ func (writer DebugWriter) Write(data []byte) (n int, err error) {
 	return len(data), nil
 }
 
+// GetAPIEnvs Get api.environment in docker-compose.yml
 func GetAPIEnvs() []string {
 	path, ok := os.LookupEnv(DockerComposePath)
 	if !ok {
@@ -144,7 +154,7 @@ func Run() error {
 		log.SetOutput(DebugWriter{})
 	}
 
-	ip, ok := os.LookupEnv(c.MultiCloudIP)
+	ip, ok := os.LookupEnv(MultiCloudIP)
 	if !ok {
 		return fmt.Errorf("ERROR: You must provide the ip by setting " +
 			"the environment variable MULTI_CLOUD_IP")

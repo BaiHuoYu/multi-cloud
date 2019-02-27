@@ -20,10 +20,6 @@ import (
 	"github.com/opensds/multi-cloud/api/pkg/filters/context"
 )
 
-const (
-	MultiCloudIP = "MULTI_CLOUD_IP"
-)
-
 // Client is a struct for exposing some operations of resources.
 type Client struct {
 	*BackendMgr
@@ -57,7 +53,7 @@ func NewClient(c *Config) *Client {
 		c.AuthOptions = NewNoauthOptions(context.DefaultTenantId)
 	}
 
-	t := c.AuthOptions.GetTenantId()
+	t := c.AuthOptions.GetTenantID()
 	return &Client{
 		cfg:        c,
 		BackendMgr: NewBackendMgr(r, c.Endpoint, t),

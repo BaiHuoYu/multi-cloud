@@ -32,16 +32,19 @@ import (
 	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
 )
 
-func NewHttpError(code int, msg string) error {
-	return &HttpError{Code: code, Msg: msg}
+// NewHTTPError implementation
+func NewHTTPError(code int, msg string) error {
+	return &HTTPError{Code: code, Msg: msg}
 }
 
-type HttpError struct {
+// HTTPError implementation
+type HTTPError struct {
 	Code int
 	Msg  string
 }
 
-func (e *HttpError) Decode() {
+// Decode implementation
+func (e *HTTPError) Decode() {
 	errSpec := model.ErrorSpec{}
 	err := json.Unmarshal([]byte(e.Msg), &errSpec)
 	if err == nil {
@@ -49,24 +52,26 @@ func (e *HttpError) Decode() {
 	}
 }
 
-func (e *HttpError) Error() string {
+// Error implementation
+func (e *HTTPError) Error() string {
 	e.Decode()
 	return fmt.Sprintf("Code: %v, Desc: %s, Msg: %v", e.Code, http.StatusText(e.Code), e.Msg)
 }
 
-// ParamOption
+// HeaderOption implementation
 type HeaderOption map[string]string
 
-// Receiver
+// Receiver implementation
 type Receiver interface {
 	Recv(url string, method string, input interface{}, output interface{}) error
 }
 
-// NewReceiver
+// NewReceiver implementation
 func NewReceiver() Receiver {
 	return &receiver{}
 }
 
+// request implementation
 func request(url string, method string, headers HeaderOption, input interface{}, output interface{}) error {
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
@@ -100,7 +105,7 @@ func request(url string, method string, headers HeaderOption, input interface{},
 
 	log.Printf("\nStatusCode: %s\nResponse Body:\n%s\n", resp.Status, string(rbody))
 	if 400 <= resp.StatusCode && resp.StatusCode <= 599 {
-		return NewHttpError(resp.StatusCode, string(rbody))
+		return NewHTTPError(resp.StatusCode, string(rbody))
 	}
 
 	// If the format of output is nil, skip unmarshaling the result.
@@ -119,16 +124,19 @@ func (*receiver) Recv(url string, method string, input interface{}, output inter
 	return request(url, method, nil, input, output)
 }
 
+// NewKeystoneReciver implementation
 func NewKeystoneReciver(auth *KeystoneAuthOptions) Receiver {
 	k := &KeystoneReciver{Auth: auth}
 	k.GetToken()
 	return k
 }
 
+// KeystoneReciver implementation
 type KeystoneReciver struct {
 	Auth *KeystoneAuthOptions
 }
 
+// GetToken implementation
 func (k *KeystoneReciver) GetToken() error {
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: k.Auth.IdentityEndpoint,
@@ -166,11 +174,12 @@ func (k *KeystoneReciver) GetToken() error {
 	return nil
 }
 
+// Recv implementation
 func (k *KeystoneReciver) Recv(url string, method string, body interface{}, output interface{}) error {
 	desc := fmt.Sprintf("%s %s", method, url)
 	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
 		if retryIdx > 0 {
-			err, ok := lastErr.(*HttpError)
+			err, ok := lastErr.(*HTTPError)
 			if ok && err.Code == http.StatusUnauthorized {
 				k.GetToken()
 			} else {
