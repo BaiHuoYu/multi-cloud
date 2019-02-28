@@ -15,6 +15,7 @@
 package client
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/opensds/multi-cloud/backend/proto"
@@ -43,7 +44,7 @@ func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.Create
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", body, &res); err != nil {
+	if err := b.Recv(url, "POST", body, &res); err != nil {
 		return nil, err
 	}
 
@@ -58,6 +59,7 @@ func (b *BackendMgr) GetBackend(ID string) (*backend.GetBackendResponse, error) 
 		GenerateBackendURL(b.TenantID, ID)}, "/")
 
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
+		fmt.Printf("CLIENT 62 %+v\n", err)
 		return nil, err
 	}
 
