@@ -84,7 +84,8 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 	resp, err := client.GetBackend(args[0])
 	if err != nil {
-		fmt.Printf("cli 87 %+v\n", err)
+		fmt.Printf("cli 87 %+v,++++%v\n", err,err.Error())
+		
 		Fatalln(HTTPErrStrip(err))
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
