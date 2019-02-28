@@ -19,8 +19,10 @@ This module implements a entry into the OpenSDS service.
 package cli
 
 import (
+	"encoding/json"
 	"os"
 
+	backend "github.com/opensds/multi-cloud/backend/proto"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +30,12 @@ var backendCommand = &cobra.Command{
 	Use:   "backend",
 	Short: "manage backends in the multi-cloud",
 	Run:   backendAction,
+}
+
+var backendCreateCommand = &cobra.Command{
+	Use:   "create <backend info>",
+	Short: "create a backend in the multi-cloud",
+	Run:   backendShowAction,
 }
 
 var backendShowCommand = &cobra.Command{
@@ -43,6 +51,7 @@ var backendListCommand = &cobra.Command{
 }
 
 func init() {
+	backendCommand.AddCommand(backendCreateCommand)
 	backendCommand.AddCommand(backendShowCommand)
 	backendCommand.AddCommand(backendListCommand)
 }
@@ -50,6 +59,24 @@ func init() {
 func backendAction(cmd *cobra.Command, args []string) {
 	cmd.Usage()
 	os.Exit(1)
+}
+
+func backendCreateAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+	backend := &backend.BackendDetail{}
+	if err := json.Unmarshal([]byte(args[0]), backend); err != nil {
+		Errorln(err)
+		cmd.Usage()
+		os.Exit(1)
+	}
+
+	resp, err := client.CreateBackend(backend)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
+		"Endpoint", "BucketName", "Access", "Security"}
+	PrintDict(resp, keys, FormatterList{})
 }
 
 func backendShowAction(cmd *cobra.Command, args []string) {

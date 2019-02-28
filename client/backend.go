@@ -36,6 +36,20 @@ type BackendMgr struct {
 	TenantID string
 }
 
+// CreateBackend implementation
+func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.CreateBackendResponse, error) {
+	var res backend.CreateBackendResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateBackendURL(b.TenantID)}, "/")
+
+	if err := b.Recv(url, "GET", body, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
 // GetBackend implementation
 func (b *BackendMgr) GetBackend(ID string) (*backend.GetBackendResponse, error) {
 	var res backend.GetBackendResponse
