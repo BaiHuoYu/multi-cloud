@@ -76,7 +76,7 @@ func backendCreateAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
-	PrintDict(resp, keys, FormatterList{})
+	PrintDict(resp.Backend, keys, FormatterList{})
 }
 
 func backendShowAction(cmd *cobra.Command, args []string) {
@@ -86,7 +86,7 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
-	PrintDict(resp, keys, FormatterList{})
+	PrintDict(resp.Backend, keys, FormatterList{})
 }
 
 func backendListAction(cmd *cobra.Command, args []string) {
@@ -95,6 +95,7 @@ func backendListAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
-	PrintDict(resp, keys, FormatterList{})
+	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
+		"Endpoint", "BucketName", "Access", "Security"}
+	PrintList(resp.Backends, keys, FormatterList{})
 }
