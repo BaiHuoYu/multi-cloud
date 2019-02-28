@@ -15,7 +15,6 @@
 package client
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/opensds/multi-cloud/backend/proto"
@@ -66,13 +65,12 @@ func (b *BackendMgr) GetBackend(ID string) (*backend.GetBackendResponse, error) 
 }
 
 // ListBackends implementation
-func (b *BackendMgr) ListBackends() (*backend.GetBackendResponse, error) {
-	var res backend.GetBackendResponse
+func (b *BackendMgr) ListBackends() (*backend.ListBackendResponse, error) {
+	var res backend.ListBackendResponse
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	fmt.Printf("ListBackends:%+v\n", url)
 	if err := b.Recv(url, "GET", nil, &res); err != nil {
 		return nil, err
 	}
