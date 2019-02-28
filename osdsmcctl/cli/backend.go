@@ -20,7 +20,6 @@ package cli
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 
 	backend "github.com/opensds/multi-cloud/backend/proto"
@@ -84,8 +83,6 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 	resp, err := client.GetBackend(args[0])
 	if err != nil {
-		fmt.Printf("cli 87 %+v,++++%v\n", err,err.Error())
-		
 		Fatalln(HTTPErrStrip(err))
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
