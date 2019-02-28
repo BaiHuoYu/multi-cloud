@@ -17,6 +17,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	c "github.com/opensds/multi-cloud/client"
 	"github.com/spf13/cobra"
@@ -92,16 +93,18 @@ func Fatalln(a ...interface{}) {
 
 // HTTPErrStrip Strip some redundant message from client http error.
 func HTTPErrStrip(err error) error {
-	fmt.Printf("HTTPErrStrip 95 %+v/n", err)
 	if httpErr, ok := err.(*c.HTTPError); ok {
-		fmt.Printf("HTTPErrStrip 97 %+v-----------%+v/n", httpErr.Msg, httpErr.Desc)
 		httpErr.Decode()
 		if "" != httpErr.Msg {
 			return fmt.Errorf(httpErr.Msg)
 		}
+	}
 
-		if "" != httpErr.Desc {
-			return fmt.Errorf(httpErr.Desc)
+	splitRetA := strings.Split(err.Error(), "Desc:")
+	if len(splitRetA) > 1 {
+		splitRetB := strings.Split(splitRetA[1], ", Msg:")
+		if "" != splitRetB[0] {
+			return fmt.Errorf(splitRetB[0])
 		}
 	}
 
