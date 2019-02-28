@@ -92,7 +92,9 @@ func Fatalln(a ...interface{}) {
 
 // HTTPErrStrip Strip some redundant message from client http error.
 func HTTPErrStrip(err error) error {
+	fmt.Printf("HTTPErrStrip 95 %+v/n", err)
 	if httpErr, ok := err.(*c.HTTPError); ok {
+		fmt.Printf("HTTPErrStrip 97 %+v-----------%+v/n", httpErr.Msg, httpErr.Desc)
 		httpErr.Decode()
 		if "" != httpErr.Msg {
 			return fmt.Errorf(httpErr.Msg)
