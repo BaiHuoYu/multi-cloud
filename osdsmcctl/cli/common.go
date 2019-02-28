@@ -94,8 +94,15 @@ func Fatalln(a ...interface{}) {
 func HTTPErrStrip(err error) error {
 	if httpErr, ok := err.(*c.HTTPError); ok {
 		httpErr.Decode()
-		return fmt.Errorf(httpErr.Msg)
+		if "" != httpErr.Msg {
+			return fmt.Errorf(httpErr.Msg)
+		}
+
+		if "" != httpErr.Desc {
+			return fmt.Errorf(httpErr.Desc)
+		}
 	}
+
 	return err
 }
 

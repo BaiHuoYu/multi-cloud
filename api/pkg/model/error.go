@@ -24,7 +24,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/emicklei/go-restful"
+	restful "github.com/emicklei/go-restful"
 	log "github.com/golang/glog"
 )
 
@@ -47,6 +47,7 @@ const (
 // status code, and a custom error message unique for each failure case.
 type ErrorSpec struct {
 	Code    int    `json:"code,omitempty"`
+	Desc    string `json:"Desc,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 

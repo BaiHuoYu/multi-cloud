@@ -40,6 +40,7 @@ func NewHTTPError(code int, msg string) error {
 // HTTPError implementation
 type HTTPError struct {
 	Code int
+	Desc string
 	Msg  string
 }
 
@@ -49,6 +50,11 @@ func (e *HTTPError) Decode() {
 	err := json.Unmarshal([]byte(e.Msg), &errSpec)
 	if err == nil {
 		e.Msg = errSpec.Message
+	}
+
+	err = json.Unmarshal([]byte(e.Desc), &errSpec)
+	if err == nil {
+		e.Desc = errSpec.Desc
 	}
 }
 
