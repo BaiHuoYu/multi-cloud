@@ -104,6 +104,8 @@ func request(url string, method string, headers HeaderOption, input interface{},
 	if err != nil {
 		return err
 	}
+
+	log.Printf("resp=%+v\n", resp)
 	rbody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
