@@ -100,6 +100,10 @@ func request(url string, method string, headers HeaderOption, input interface{},
 		}
 	}
 
+	if "POST" == method {
+		req.Header("Content-Type", "application/json")
+	}
+
 	log.Printf("req=%+v\n", req)
 	// Get http response.
 	resp, err := req.Response()
