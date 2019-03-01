@@ -77,3 +77,17 @@ func (b *BackendMgr) ListBackends() (*backend.ListBackendResponse, error) {
 
 	return &res, nil
 }
+
+// UpdateBackend implementation
+func (b *BackendMgr) UpdateBackend(body *backend.UpdateBackendRequest) (*backend.BackendDetail, error) {
+	var res backend.BackendDetail
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateBackendURL(b.TenantID)}, "/")
+
+	if err := b.Recv(url, "PUT", body, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}

@@ -20,11 +20,15 @@ package cli
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 
 	backend "github.com/opensds/multi-cloud/backend/proto"
 	"github.com/spf13/cobra"
+)
+
+var (
+	access   string
+	security string
 )
 
 var backendCommand = &cobra.Command{
@@ -51,10 +55,20 @@ var backendListCommand = &cobra.Command{
 	Run:   backendListAction,
 }
 
+var backendUpdateCommand = &cobra.Command{
+	Use:   "update <id>",
+	Short: "update a backend in the multi-cloud",
+	Run:   backendUpdateAction,
+}
+
 func init() {
 	backendCommand.AddCommand(backendCreateCommand)
 	backendCommand.AddCommand(backendShowCommand)
 	backendCommand.AddCommand(backendListCommand)
+
+	backendCommand.AddCommand(backendUpdateCommand)
+	backendCommand.Flags().StringVarP(&access, "access", "a", "", "the access of updated backend")
+	backendCommand.Flags().StringVarP(&security, "security", "s", "", "the security of updated backend")
 }
 
 func backendAction(cmd *cobra.Command, args []string) {
@@ -72,10 +86,8 @@ func backendCreateAction(cmd *cobra.Command, args []string) {
 	}
 
 	resp, err := client.CreateBackend(backend)
-	fmt.Printf("75----------------resp=%+v----err=%v\n",resp, err)
-	
 	if err != nil {
-		
+
 		Fatalln(HTTPErrStrip(err))
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
@@ -91,7 +103,7 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
-	
+
 	PrintDict(resp, keys, FormatterList{})
 }
 
@@ -104,4 +116,22 @@ func backendListAction(cmd *cobra.Command, args []string) {
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
 	PrintList(resp.Backends, keys, FormatterList{})
+}
+
+func backendUpdateAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+	backend := &backend.UpdateBackendRequest{
+		Id:       args[0],
+		Access:   access,
+		Security: security,
+	}
+
+	resp, err := client.UpdateBackend(backend)
+	if err != nil {
+
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
+		"Endpoint", "BucketName", "Access", "Security"}
+	PrintDict(resp, keys, FormatterList{})
 }
