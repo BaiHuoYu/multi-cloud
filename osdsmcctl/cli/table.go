@@ -87,8 +87,8 @@ func visitStructElem(u interface{}, keys KeyList, fn StructElemCb) {
 		t = t.Elem()
 	}
 
-	fmt.Sprintf("v=%+v\n", v)
-	fmt.Sprintf("t=%+v\n", t)
+	fmt.Printf("v=%+v\n", v)
+	fmt.Printf("t=%+v\n", t)
 
 	if v.Kind() != reflect.Struct {
 		panic(fmt.Sprintf("slice's kind is %v instead of struct", v.Kind()))
