@@ -82,6 +82,8 @@ func slice2map(slice []string) map[string]int {
 func visitStructElem(u interface{}, keys KeyList, fn StructElemCb) {
 	v := reflect.ValueOf(u)
 	t := reflect.TypeOf(u)
+	fmt.Printf("85---------v=%+v\n", v)
+	fmt.Printf("86---------t=%+v\n", t)
 	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
 		t = t.Elem()
