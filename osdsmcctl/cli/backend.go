@@ -35,7 +35,7 @@ var backendCommand = &cobra.Command{
 var backendCreateCommand = &cobra.Command{
 	Use:   "create <backend info>",
 	Short: "create a backend in the multi-cloud",
-	Run:   backendShowAction,
+	Run:   backendCreateAction,
 }
 
 var backendShowCommand = &cobra.Command{
