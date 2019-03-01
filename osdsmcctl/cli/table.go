@@ -86,8 +86,12 @@ func visitStructElem(u interface{}, keys KeyList, fn StructElemCb) {
 		v = v.Elem()
 		t = t.Elem()
 	}
+
+	fmt.Sprintf("v=%+v\n", v)
+	fmt.Sprintf("t=%+v\n", t)
+
 	if v.Kind() != reflect.Struct {
-		panic("Table: items of slice should be on struct value")
+		panic(fmt.Sprintf("slice's kind is %v instead of struct", v.Kind()))
 	}
 
 	whiteList := slice2map(keys)

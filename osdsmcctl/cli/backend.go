@@ -85,7 +85,8 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	keys := KeyList{"Id", "TenantId", "UserId", "Name"}
+	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
+		"Endpoint", "BucketName", "Access", "Security"}
 	PrintDict(resp.Backend, keys, FormatterList{})
 }
 
