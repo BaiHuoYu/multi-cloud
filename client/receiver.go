@@ -99,6 +99,8 @@ func request(url string, method string, headers HeaderOption, input interface{},
 			req.Header(k, v)
 		}
 	}
+
+	log.Printf("req=%+v\n", req)
 	// Get http response.
 	resp, err := req.Response()
 	if err != nil {
