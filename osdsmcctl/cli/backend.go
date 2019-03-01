@@ -67,8 +67,8 @@ func init() {
 	backendCommand.AddCommand(backendListCommand)
 
 	backendCommand.AddCommand(backendUpdateCommand)
-	backendCommand.Flags().StringVarP(&access, "access", "a", "", "the access of updated backend")
-	backendCommand.Flags().StringVarP(&security, "security", "s", "", "the security of updated backend")
+	backendUpdateCommand.Flags().StringVarP(&access, "access", "a", "", "the access of updated backend")
+	backendUpdateCommand.Flags().StringVarP(&security, "security", "s", "", "the security of updated backend")
 }
 
 func backendAction(cmd *cobra.Command, args []string) {
