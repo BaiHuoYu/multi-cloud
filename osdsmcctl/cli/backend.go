@@ -21,7 +21,6 @@ package cli
 import (
 	"encoding/json"
 	"os"
-	"fmt"
 
 	backend "github.com/opensds/multi-cloud/backend/proto"
 	"github.com/spf13/cobra"
@@ -77,7 +76,7 @@ func backendCreateAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
-	PrintDict(resp.Backend, keys, FormatterList{})
+	PrintDict(resp, keys, FormatterList{})
 }
 
 func backendShowAction(cmd *cobra.Command, args []string) {
@@ -89,8 +88,7 @@ func backendShowAction(cmd *cobra.Command, args []string) {
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
 	
-	fmt.Printf("92----------%+v\n",resp.Backend,)
-	PrintDict(resp.Backend, keys, FormatterList{})
+	PrintDict(resp, keys, FormatterList{})
 }
 
 func backendListAction(cmd *cobra.Command, args []string) {

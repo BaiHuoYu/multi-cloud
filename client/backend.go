@@ -37,8 +37,8 @@ type BackendMgr struct {
 }
 
 // CreateBackend implementation
-func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.CreateBackendResponse, error) {
-	var res backend.CreateBackendResponse
+func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.BackendDetail, error) {
+	var res backend.BackendDetail
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
@@ -51,8 +51,8 @@ func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.Create
 }
 
 // GetBackend implementation
-func (b *BackendMgr) GetBackend(ID string) (*backend.GetBackendResponse, error) {
-	var res backend.GetBackendResponse
+func (b *BackendMgr) GetBackend(ID string) (*backend.BackendDetail, error) {
+	var res backend.BackendDetail
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, ID)}, "/")
