@@ -50,6 +50,19 @@ func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.Backen
 	return &res, nil
 }
 
+// DeleteBackend implementation
+func (b *BackendMgr) DeleteBackend(ID string) error {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateBackendURL(b.TenantID, ID)}, "/")
+
+	if err := b.Recv(url, "DELETE", nil, nil); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetBackend implementation
 func (b *BackendMgr) GetBackend(ID string) (*backend.BackendDetail, error) {
 	var res backend.BackendDetail

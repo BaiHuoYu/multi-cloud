@@ -43,6 +43,12 @@ var backendCreateCommand = &cobra.Command{
 	Run:   backendCreateAction,
 }
 
+var backendDeleteCommand = &cobra.Command{
+	Use:   "delete <id>",
+	Short: "delete a backend in the multi-cloud",
+	Run:   backendDeleteAction,
+}
+
 var backendShowCommand = &cobra.Command{
 	Use:   "show <id>",
 	Short: "show a backend in the multi-cloud",
@@ -93,6 +99,14 @@ func backendCreateAction(cmd *cobra.Command, args []string) {
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
 	PrintDict(resp, keys, FormatterList{})
+}
+
+func backendDeleteAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+	err := client.DeleteBackend(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
 }
 
 func backendShowAction(cmd *cobra.Command, args []string) {
