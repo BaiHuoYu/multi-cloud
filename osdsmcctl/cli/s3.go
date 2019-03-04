@@ -19,7 +19,6 @@ This module implements a entry into the OpenSDS service.
 package cli
 
 import (
-	"fmt"
 	"os"
 
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
@@ -56,10 +55,10 @@ func bucketAction(cmd *cobra.Command, args []string) {
 
 func bucketCreateAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
-	var bucket *s3.CreateBucketConfiguration
-	fmt.Printf("Xmlns=%+v, LocationConstraint=%+v\n", xmlns, locationconstraint)
-	bucket.Xmlns = xmlns
-	bucket.LocationConstraint = locationconstraint
+	bucket := &s3.CreateBucketConfiguration{
+		Xmlns:              xmlns,
+		LocationConstraint: locationconstraint,
+	}
 
 	err := client.CreateBucket(args[0], bucket)
 	if err != nil {
