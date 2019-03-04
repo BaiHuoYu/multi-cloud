@@ -43,7 +43,7 @@ func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.Backen
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "POST", body, &res); err != nil {
+	if err := b.Recv(url, "POST", JsonHeaders, body, &res); err != nil {
 		return nil, err
 	}
 
@@ -56,7 +56,7 @@ func (b *BackendMgr) DeleteBackend(ID string) error {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, ID)}, "/")
 
-	if err := b.Recv(url, "DELETE", nil, nil); err != nil {
+	if err := b.Recv(url, "DELETE", JsonHeaders, nil, nil); err != nil {
 		return err
 	}
 
@@ -70,7 +70,7 @@ func (b *BackendMgr) GetBackend(ID string) (*backend.BackendDetail, error) {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, ID)}, "/")
 
-	if err := b.Recv(url, "GET", nil, &res); err != nil {
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res); err != nil {
 		return nil, err
 	}
 
@@ -84,7 +84,7 @@ func (b *BackendMgr) ListBackends() (*backend.ListBackendResponse, error) {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", nil, &res); err != nil {
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res); err != nil {
 		return nil, err
 	}
 
@@ -98,7 +98,7 @@ func (b *BackendMgr) UpdateBackend(body *backend.UpdateBackendRequest) (*backend
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, body.Id)}, "/")
 
-	if err := b.Recv(url, "PUT", body, &res); err != nil {
+	if err := b.Recv(url, "PUT", JsonHeaders, body, &res); err != nil {
 		return nil, err
 	}
 

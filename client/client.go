@@ -23,6 +23,7 @@ import (
 // Client is a struct for exposing some operations of resources.
 type Client struct {
 	*BackendMgr
+	*BucketMgr
 
 	cfg *Config
 }

@@ -32,6 +32,7 @@ const (
 	HeaderKeyContentType = "Content-Type"
 	// Header item value: "application/json"
 	HeaderValueJson = "application/json"
+	HeaderValueXml  = "application/xml"
 
 	// OpenSDS multi-cloud current api version
 	APIVersion = "v1"

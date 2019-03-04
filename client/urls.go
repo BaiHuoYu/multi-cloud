@@ -20,6 +20,11 @@ import (
 	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
 )
 
+var (
+	JsonHeaders = HeaderOption{constants.HeaderKeyContentType: constants.HeaderValueJson}
+	XmlHeaders  = HeaderOption{constants.HeaderKeyContentType: constants.HeaderValueXml}
+)
+
 // GenerateBackendURL implementation
 func GenerateBackendURL(tenantID string, in ...string) string {
 	return generateURL("backends", tenantID, in...)
@@ -47,7 +52,7 @@ func GeneratePolicyURL(tenantID string, in ...string) string {
 
 // GenerateS3URL implementation
 func GenerateS3URL(tenantID string, in ...string) string {
-	return generateURL("s3", tenantID, in...)
+	return generateURL("s3", "", in...)
 }
 
 // CurrentVersion implementation

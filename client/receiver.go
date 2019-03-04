@@ -69,7 +69,7 @@ type HeaderOption map[string]string
 
 // Receiver implementation
 type Receiver interface {
-	Recv(url string, method string, input interface{}, output interface{}) error
+	Recv(url string, method string, headers HeaderOption, input interface{}, output interface{}) error
 }
 
 // NewReceiver implementation
@@ -130,10 +130,7 @@ func request(url string, method string, headers HeaderOption, input interface{},
 
 type receiver struct{}
 
-func (*receiver) Recv(url string, method string, input interface{}, output interface{}) error {
-	headers := HeaderOption{}
-	headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
-
+func (*receiver) Recv(url string, method string, headers HeaderOption, input interface{}, output interface{}) error {
 	return request(url, method, headers, input, output)
 }
 
@@ -188,7 +185,7 @@ func (k *KeystoneReciver) GetToken() error {
 }
 
 // Recv implementation
-func (k *KeystoneReciver) Recv(url string, method string, body interface{}, output interface{}) error {
+func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption, body interface{}, output interface{}) error {
 	desc := fmt.Sprintf("%s %s", method, url)
 	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
 		if retryIdx > 0 {
@@ -200,7 +197,6 @@ func (k *KeystoneReciver) Recv(url string, method string, body interface{}, outp
 			}
 		}
 
-		headers := HeaderOption{}
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
 
