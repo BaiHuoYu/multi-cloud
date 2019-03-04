@@ -69,6 +69,7 @@ var backendUpdateCommand = &cobra.Command{
 
 func init() {
 	backendCommand.AddCommand(backendCreateCommand)
+	backendCommand.AddCommand(backendDeleteCommand)
 	backendCommand.AddCommand(backendShowCommand)
 	backendCommand.AddCommand(backendListCommand)
 
