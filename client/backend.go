@@ -83,7 +83,7 @@ func (b *BackendMgr) UpdateBackend(body *backend.UpdateBackendRequest) (*backend
 	var res backend.BackendDetail
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateBackendURL(b.TenantID, ID)}, "/")
+		GenerateBackendURL(b.TenantID, body.Id)}, "/")
 
 	if err := b.Recv(url, "PUT", body, &res); err != nil {
 		return nil, err
