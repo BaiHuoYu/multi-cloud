@@ -100,10 +100,6 @@ func request(url string, method string, headers HeaderOption, input interface{},
 		}
 	}
 
-	if "POST" == method {
-		req.Header("Content-Type", "application/json")
-	}
-
 	log.Printf("req=%+v\n", req)
 	// Get http response.
 	resp, err := req.Response()
@@ -135,7 +131,10 @@ func request(url string, method string, headers HeaderOption, input interface{},
 type receiver struct{}
 
 func (*receiver) Recv(url string, method string, input interface{}, output interface{}) error {
-	return request(url, method, nil, input, output)
+	headers := HeaderOption{}
+	headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
+
+	return request(url, method, headers, input, output)
 }
 
 // NewKeystoneReciver implementation
@@ -203,6 +202,8 @@ func (k *KeystoneReciver) Recv(url string, method string, body interface{}, outp
 
 		headers := HeaderOption{}
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
+		headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
+
 		return request(url, method, headers, body, output)
 	})
 }
