@@ -58,5 +58,6 @@ func NewClient(c *Config) *Client {
 	return &Client{
 		cfg:        c,
 		BackendMgr: NewBackendMgr(r, c.Endpoint, t),
+		BucketMgr:  NewBucketMgr(r, c.Endpoint, t),
 	}
 }
