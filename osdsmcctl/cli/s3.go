@@ -19,6 +19,7 @@ This module implements a entry into the OpenSDS service.
 package cli
 
 import (
+	"log"
 	"os"
 
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
@@ -65,6 +66,7 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 	
+	log.Printf("bucketCreateAction resp:(%+v)", resp)
 	keys := KeyList{"ErrorCode", "Msg"}
 	PrintDict(resp, keys, FormatterList{})
 }
