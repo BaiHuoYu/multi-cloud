@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	bucket "github.com/opensds/multi-cloud/s3/pkg/model"
+	"github.com/opensds/multi-cloud/s3/proto"
 )
 
 type CBaseResponse struct {
@@ -93,6 +94,20 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 
 	res := CBaseResponse{}
 	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// ListObjects implementation
+func (b *BucketMgr) ListObjects(BucketName string) (*s3.ListObjectResponse, error) {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateS3URL(b.TenantID), BucketName}, "/")
+
+	res := s3.ListObjectResponse{}
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
 		return nil, err
 	}
 

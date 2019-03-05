@@ -104,6 +104,7 @@ type DockerCompose struct {
 func init() {
 	rootCommand.AddCommand(backendCommand)
 	rootCommand.AddCommand(bucketCommand)
+	rootCommand.AddCommand(objectListCommand)
 	flags := rootCommand.PersistentFlags()
 	flags.BoolVar(&Debug, "debug", false, "shows debugging output.")
 }

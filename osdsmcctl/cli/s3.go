@@ -31,15 +31,21 @@ var (
 	locationconstraint string
 )
 
-type S3Response struct {
+type S3BaseResp struct {
 	ErrorCode string
 	Message   string
 }
 
 var bucketCommand = &cobra.Command{
 	Use:   "bucket",
-	Short: "manage buckets in the multi-cloud",
+	Short: "manage buckets",
 	Run:   bucketAction,
+}
+
+var objectCommand = &cobra.Command{
+	Use:   "object",
+	Short: "manage objects",
+	Run:   objectAction,
 }
 
 var bucketCreateCommand = &cobra.Command{
@@ -54,12 +60,20 @@ var bucketDeleteCommand = &cobra.Command{
 	Run:   bucketDeleteAction,
 }
 
+var objectListCommand = &cobra.Command{
+	Use:   "list <BucketName>",
+	Short: "list objects in a bucket",
+	Run:   objectListAction,
+}
+
 func init() {
 	bucketCommand.AddCommand(bucketCreateCommand)
 	bucketCreateCommand.Flags().StringVarP(&xmlns, "xmlns", "x", "", "the xmlns of updated bucket")
 	bucketCreateCommand.Flags().StringVarP(&locationconstraint, "locationconstraint", "l", "", "the location constraint of updated bucket")
 
 	bucketCommand.AddCommand(bucketDeleteCommand)
+
+	objectCommand.AddCommand(objectListCommand)
 }
 
 func bucketAction(cmd *cobra.Command, args []string) {
@@ -67,8 +81,13 @@ func bucketAction(cmd *cobra.Command, args []string) {
 	os.Exit(1)
 }
 
-func PrintS3Resp(resp *c.CBaseResponse) {
-	S3Resp := S3Response{
+func objectAction(cmd *cobra.Command, args []string) {
+	cmd.Usage()
+	os.Exit(1)
+}
+
+func PrintS3BaseResp(resp *c.CBaseResponse) {
+	S3Resp := S3BaseResp{
 		ErrorCode: resp.CErrorCode.Value,
 		Message:   resp.CMsg.Value,
 	}
@@ -89,7 +108,7 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 
-	PrintS3Resp(resp)
+	PrintS3BaseResp(resp)
 }
 
 func bucketDeleteAction(cmd *cobra.Command, args []string) {
@@ -100,5 +119,17 @@ func bucketDeleteAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 
-	PrintS3Resp(resp)
+	PrintS3BaseResp(resp)
+}
+
+func objectListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.ListObjects(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	keys := KeyList{"ObjectKey", "BucketName", "Size", "Backend"}
+	PrintList(resp.ListObjects, keys, FormatterList{})
 }
