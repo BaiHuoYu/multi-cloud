@@ -21,6 +21,7 @@ package cli
 import (
 	"log"
 	"os"
+	"encoding/xml"
 
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/spf13/cobra"
@@ -66,7 +67,13 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 	
-	log.Printf("bucketCreateAction resp:(%+v)", resp)
+	log.Printf("bucketCreateAction resp:(%+v)\n", resp)	
 	keys := KeyList{"CErrorCode", "CMsg"}
 	PrintDict(resp, keys, FormatterList{})
+	log.Printf("bucketCreateAction resp.CMsg.XMLName:(%+v)\n", resp.CMsg.XMLName)
+	body, err := xml.Marshal(resp.CMsg)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	log.Printf("bucketCreateAction resp body:(%+v)\n", body)
 }
