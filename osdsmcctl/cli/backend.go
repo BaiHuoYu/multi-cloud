@@ -39,31 +39,31 @@ var backendCommand = &cobra.Command{
 
 var backendCreateCommand = &cobra.Command{
 	Use:   "create <backend info>",
-	Short: "create a backend in the multi-cloud",
+	Short: "create a backend",
 	Run:   backendCreateAction,
 }
 
 var backendDeleteCommand = &cobra.Command{
 	Use:   "delete <id>",
-	Short: "delete a backend in the multi-cloud",
+	Short: "delete a backend",
 	Run:   backendDeleteAction,
 }
 
 var backendShowCommand = &cobra.Command{
 	Use:   "show <id>",
-	Short: "show a backend in the multi-cloud",
+	Short: "qurey a backend information",
 	Run:   backendShowAction,
 }
 
 var backendListCommand = &cobra.Command{
 	Use:   "list",
-	Short: "list all backends in the multi-cloud",
+	Short: "list all backends",
 	Run:   backendListAction,
 }
 
 var backendUpdateCommand = &cobra.Command{
 	Use:   "update <id>",
-	Short: "update a backend in the multi-cloud",
+	Short: "update a backend",
 	Run:   backendUpdateAction,
 }
 

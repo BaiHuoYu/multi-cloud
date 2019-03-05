@@ -43,7 +43,7 @@ var bucketCommand = &cobra.Command{
 
 var bucketCreateCommand = &cobra.Command{
 	Use:   "create <bucket info>",
-	Short: "create a bucket in the multi-cloud",
+	Short: "create a bucket",
 	Run:   bucketCreateAction,
 }
 
