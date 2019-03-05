@@ -15,10 +15,42 @@
 package client
 
 import (
+	"encoding/xml"
 	"strings"
 
 	bucket "github.com/opensds/multi-cloud/s3/pkg/model"
 )
+
+type CBaseResponse struct {
+	XMLName               xml.Name               `xml:"BaseResponse,omitempty" json:"BaseResponse,omitempty"`
+	CErrorCode            *CErrorCode            `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
+	CMsg                  *CMsg                  `xml:"Msg,omitempty" json:"Msg,omitempty"`
+	CXXX_NoUnkeyedLiteral *CXXX_NoUnkeyedLiteral `xml:"XXX_NoUnkeyedLiteral,omitempty" json:"XXX_NoUnkeyedLiteral,omitempty"`
+	CXXX_sizecache        *CXXX_sizecache        `xml:"XXX_sizecache,omitempty" json:"XXX_sizecache,omitempty"`
+	CXXX_unrecognized     *CXXX_unrecognized     `xml:"XXX_unrecognized,omitempty" json:"XXX_unrecognized,omitempty"`
+}
+
+type CErrorCode struct {
+	XMLName xml.Name `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
+}
+
+type CMsg struct {
+	XMLName xml.Name `xml:"Msg,omitempty" json:"Msg,omitempty"`
+	string  string   `xml:",chardata" json:",omitempty"`
+}
+
+type CXXX_NoUnkeyedLiteral struct {
+	XMLName xml.Name `xml:"XXX_NoUnkeyedLiteral,omitempty" json:"XXX_NoUnkeyedLiteral,omitempty"`
+}
+
+type CXXX_sizecache struct {
+	XMLName xml.Name `xml:"XXX_sizecache,omitempty" json:"XXX_sizecache,omitempty"`
+	string  string   `xml:",chardata" json:",omitempty"`
+}
+
+type CXXX_unrecognized struct {
+	XMLName xml.Name `xml:"XXX_unrecognized,omitempty" json:"XXX_unrecognized,omitempty"`
+}
 
 // NewBucketMgr implementation
 func NewBucketMgr(r Receiver, edp string, tenantID string) *BucketMgr {
@@ -37,15 +69,15 @@ type BucketMgr struct {
 }
 
 // CreateBucket implementation
-func (b *BucketMgr) CreateBucket(name string, body *bucket.CreateBucketConfiguration) error {
-	var res bucket.CreateBucketConfiguration
+func (b *BucketMgr) CreateBucket(name string, body *bucket.CreateBucketConfiguration) (*CBaseResponse, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), name}, "/")
 
+	res := CBaseResponse{}
 	if err := b.Recv(url, "PUT", XmlHeaders, body, &res); err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &res, nil
 }

@@ -60,8 +60,11 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 		LocationConstraint: locationconstraint,
 	}
 
-	err := client.CreateBucket(args[0], bucket)
+	resp, err := client.CreateBucket(args[0], bucket)
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
+	
+	keys := KeyList{"ErrorCode", "Msg"}
+	PrintDict(resp, keys, FormatterList{})
 }
