@@ -85,13 +85,13 @@ func request(url string, method string, headers HeaderOption, input interface{},
 	req.SetTimeout(time.Minute*6, time.Minute*6)
 	// init body
 	log.Printf("%s %s\n", strings.ToUpper(method), url)
-	if input != nil {
-		contentType, ok := headers[constants.HeaderKeyContentType]
-		if !ok {
-			return NewHTTPError(http.StatusInternalServerError,
-				"Content-Type must be configured in the header")
-		}
+	contentType, ok := headers[constants.HeaderKeyContentType]
+	if !ok {
+		return NewHTTPError(http.StatusInternalServerError,
+			"Content-Type must be configured in the header")
+	}
 
+	if input != nil {
 		var body []byte
 		var err error
 
@@ -145,9 +145,22 @@ func request(url string, method string, headers HeaderOption, input interface{},
 	if output == nil {
 		return nil
 	}
-	if err = json.Unmarshal(rbody, output); err != nil {
-		return fmt.Errorf("failed to unmarshal result message: %v", err)
+
+	switch contentType {
+	case constants.HeaderValueJson:
+		if err = json.Unmarshal(rbody, output); err != nil {
+			return fmt.Errorf("failed to unmarshal result message: %v", err)
+		}
+		break
+	case constants.HeaderValueXml:
+		if err = xml.Unmarshal(rbody, output); err != nil {
+			return fmt.Errorf("failed to unmarshal result message: %v", err)
+		}
+		break
+	default:
+		log.Printf("Content-Type is not application/json nor application/xml\n")
 	}
+
 	return nil
 }
 
