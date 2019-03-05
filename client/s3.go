@@ -84,3 +84,17 @@ func (b *BucketMgr) CreateBucket(name string, body *bucket.CreateBucketConfigura
 
 	return &res, nil
 }
+
+// DeleteBucket implementation
+func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateS3URL(b.TenantID), name}, "/")
+
+	res := CBaseResponse{}
+	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}

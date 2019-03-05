@@ -21,6 +21,7 @@ package cli
 import (
 	"os"
 
+	c "github.com/opensds/multi-cloud/client"
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +33,7 @@ var (
 
 type S3Response struct {
 	ErrorCode string
-	Msg       string
+	Message   string
 }
 
 var bucketCommand = &cobra.Command{
@@ -47,15 +48,33 @@ var bucketCreateCommand = &cobra.Command{
 	Run:   bucketCreateAction,
 }
 
+var bucketDeleteCommand = &cobra.Command{
+	Use:   "delete <name>",
+	Short: "delete a bucket",
+	Run:   bucketDeleteAction,
+}
+
 func init() {
 	bucketCommand.AddCommand(bucketCreateCommand)
 	bucketCreateCommand.Flags().StringVarP(&xmlns, "xmlns", "x", "", "the xmlns of updated bucket")
 	bucketCreateCommand.Flags().StringVarP(&locationconstraint, "locationconstraint", "l", "", "the location constraint of updated bucket")
+
+	bucketCommand.AddCommand(bucketDeleteCommand)
 }
 
 func bucketAction(cmd *cobra.Command, args []string) {
 	cmd.Usage()
 	os.Exit(1)
+}
+
+func PrintS3Resp(resp *c.CBaseResponse) {
+	S3Resp := S3Response{
+		ErrorCode: resp.CErrorCode.Value,
+		Message:   resp.CMsg.Value,
+	}
+
+	keys := KeyList{"ErrorCode", "Message"}
+	PrintDict(S3Resp, keys, FormatterList{})
 }
 
 func bucketCreateAction(cmd *cobra.Command, args []string) {
@@ -70,10 +89,16 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 
-	S3Resp := S3Response{ErrorCode: resp.CErrorCode.Value,
-		Msg: resp.CMsg.Value,
+	PrintS3Resp(resp)
+}
+
+func bucketDeleteAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.DeleteBucket(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
 	}
 
-	keys := KeyList{"ErrorCode", "Msg"}
-	PrintDict(S3Resp, keys, FormatterList{})
+	PrintS3Resp(resp)
 }
