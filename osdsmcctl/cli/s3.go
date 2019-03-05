@@ -70,7 +70,7 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 	log.Printf("bucketCreateAction resp:(%+v)\n", resp)	
 	keys := KeyList{"CErrorCode", "CMsg"}
 	PrintDict(resp, keys, FormatterList{})
-	log.Printf("bucketCreateAction resp.CMsg.XMLName:(%+v)\n", resp.CMsg.XMLName)
+	log.Printf("bucketCreateAction resp.CMsg.XMLName:(%+v)\n", resp.CMsg)
 	body, err := xml.Marshal(resp.CMsg)
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))

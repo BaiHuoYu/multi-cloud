@@ -36,7 +36,7 @@ type CErrorCode struct {
 
 type CMsg struct {
 	XMLName xml.Name `xml:"Msg,omitempty" json:"Msg,omitempty"`
-	string  string   `xml:",chardata" json:",omitempty"`
+	Str     string   `xml:",chardata" json:",omitempty"`
 }
 
 type CXXX_NoUnkeyedLiteral struct {
