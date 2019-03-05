@@ -67,6 +67,6 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 	}
 	
 	log.Printf("bucketCreateAction resp:(%+v)", resp)
-	keys := KeyList{"ErrorCode", "Msg"}
+	keys := KeyList{"CErrorCode", "CMsg"}
 	PrintDict(resp, keys, FormatterList{})
 }
