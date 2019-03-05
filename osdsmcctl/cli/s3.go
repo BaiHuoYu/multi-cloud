@@ -19,9 +19,7 @@ This module implements a entry into the OpenSDS service.
 package cli
 
 import (
-	"log"
 	"os"
-	"encoding/xml"
 
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/spf13/cobra"
@@ -31,6 +29,11 @@ var (
 	xmlns              string
 	locationconstraint string
 )
+
+type S3Response struct {
+	ErrorCode string
+	Msg       string
+}
 
 var bucketCommand = &cobra.Command{
 	Use:   "bucket",
@@ -66,14 +69,11 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	
-	log.Printf("bucketCreateAction resp:(%+v)\n", resp)	
-	keys := KeyList{"CErrorCode", "CMsg"}
-	PrintDict(resp, keys, FormatterList{})
-	log.Printf("bucketCreateAction resp.CMsg.XMLName:(%+v)\n", resp.CMsg)
-	body, err := xml.Marshal(resp.CMsg)
-	if err != nil {
-		Fatalln(HTTPErrStrip(err))
+
+	S3Resp := S3Response{ErrorCode: resp.CErrorCode.Value,
+		Msg: resp.CMsg.Value,
 	}
-	log.Printf("bucketCreateAction resp body:(%+v)\n", string(body))
+
+	keys := KeyList{"ErrorCode", "Msg"}
+	PrintDict(S3Resp, keys, FormatterList{})
 }
