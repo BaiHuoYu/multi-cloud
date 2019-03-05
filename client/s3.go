@@ -32,24 +32,27 @@ type CBaseResponse struct {
 
 type CErrorCode struct {
 	XMLName xml.Name `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
+	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
 type CMsg struct {
 	XMLName xml.Name `xml:"Msg,omitempty" json:"Msg,omitempty"`
-	Str     string   `xml:",chardata" json:",omitempty"`
+	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
 type CXXX_NoUnkeyedLiteral struct {
 	XMLName xml.Name `xml:"XXX_NoUnkeyedLiteral,omitempty" json:"XXX_NoUnkeyedLiteral,omitempty"`
+	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
 type CXXX_sizecache struct {
 	XMLName xml.Name `xml:"XXX_sizecache,omitempty" json:"XXX_sizecache,omitempty"`
-	string  string   `xml:",chardata" json:",omitempty"`
+	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
 type CXXX_unrecognized struct {
 	XMLName xml.Name `xml:"XXX_unrecognized,omitempty" json:"XXX_unrecognized,omitempty"`
+	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
 // NewBucketMgr implementation
