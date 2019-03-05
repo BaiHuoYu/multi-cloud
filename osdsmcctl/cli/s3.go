@@ -75,5 +75,5 @@ func bucketCreateAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	log.Printf("bucketCreateAction resp body:(%+v)\n", body)
+	log.Printf("bucketCreateAction resp body:(%+v)\n", string(body))
 }
