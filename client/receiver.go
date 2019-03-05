@@ -16,6 +16,7 @@ package client
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -85,10 +86,32 @@ func request(url string, method string, headers HeaderOption, input interface{},
 	// init body
 	log.Printf("%s %s\n", strings.ToUpper(method), url)
 	if input != nil {
-		body, err := json.MarshalIndent(input, "", "  ")
-		if err != nil {
-			return err
+		contentType, ok := headers[constants.HeaderKeyContentType]
+		if !ok {
+			return NewHTTPError(http.StatusInternalServerError,
+				"Content-Type must be configured in the header")
 		}
+
+		var body []byte
+		var err error
+
+		switch contentType {
+		case constants.HeaderValueJson:
+			body, err = json.MarshalIndent(input, "", "  ")
+			if err != nil {
+				return err
+			}
+			break
+		case constants.HeaderValueXml:
+			body, err = xml.Marshal(input)
+			if err != nil {
+				return err
+			}
+			break
+		default:
+			log.Printf("Content-Type is not application/json nor application/xml\n")
+		}
+
 		log.Printf("Request body:\n%s\n", string(body))
 		req.Body(body)
 	}
