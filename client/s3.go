@@ -41,9 +41,9 @@ func (b *BucketMgr) CreateBucket(name string, body *bucket.CreateBucketConfigura
 	var res bucket.CreateBucketConfiguration
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateS3URL(b.TenantID)}, "/")
+		GenerateS3URL(b.TenantID), name}, "/")
 
-	if err := b.Recv(url, "POST", XmlHeaders, body, &res); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, body, &res); err != nil {
 		return err
 	}
 
