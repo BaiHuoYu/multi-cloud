@@ -42,12 +42,6 @@ var bucketCommand = &cobra.Command{
 	Run:   bucketAction,
 }
 
-var objectCommand = &cobra.Command{
-	Use:   "object",
-	Short: "manage objects",
-	Run:   objectAction,
-}
-
 var bucketCreateCommand = &cobra.Command{
 	Use:   "create <bucket info>",
 	Short: "create a bucket",
@@ -66,10 +60,22 @@ var bucketListCommand = &cobra.Command{
 	Run:   bucketListAction,
 }
 
+var objectCommand = &cobra.Command{
+	Use:   "object",
+	Short: "manage objects",
+	Run:   objectAction,
+}
+
 var objectListCommand = &cobra.Command{
 	Use:   "list <BucketName>",
 	Short: "list objects in a bucket",
 	Run:   objectListAction,
+}
+
+var objectUploadCommand = &cobra.Command{
+	Use:   "upload <BucketName> <object>",
+	Short: "upload object",
+	Run:   objectUploadAction,
 }
 
 func init() {
@@ -81,6 +87,7 @@ func init() {
 	bucketCommand.AddCommand(bucketListCommand)
 
 	objectCommand.AddCommand(objectListCommand)
+	objectCommand.AddCommand(objectUploadCommand)
 }
 
 func bucketAction(cmd *cobra.Command, args []string) {
@@ -152,4 +159,16 @@ func objectListAction(cmd *cobra.Command, args []string) {
 
 	keys := KeyList{"ObjectKey", "BucketName", "Size", "Backend"}
 	PrintList(resp, keys, FormatterList{})
+}
+
+
+func objectUploadAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 2)
+
+	resp, err := client.UploadObject(args[0],args[1])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	PrintS3BaseResp(resp)
 }
