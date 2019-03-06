@@ -73,7 +73,7 @@ var objectListCommand = &cobra.Command{
 }
 
 var objectUploadCommand = &cobra.Command{
-	Use:   "upload <bucket name> <object>",
+	Use:   "upload <bucket name> <object> <formname>",
 	Short: "upload object",
 	Run:   objectUploadAction,
 }
@@ -181,9 +181,9 @@ func objectListAction(cmd *cobra.Command, args []string) {
 }
 
 func objectUploadAction(cmd *cobra.Command, args []string) {
-	ArgsNumCheck(cmd, args, 2)
+	ArgsNumCheck(cmd, args, 3)
 
-	resp, err := client.UploadObject(args[0], args[1])
+	resp, err := client.UploadObject(args[0], args[1], args[2])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}

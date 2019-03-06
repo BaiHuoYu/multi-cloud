@@ -129,13 +129,13 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 }
 
 // UploadObject implementation
-func (b *BucketMgr) UploadObject(BucketName string, Object string) (*CBaseResponse, error) {
+func (b *BucketMgr) UploadObject(BucketName, Object, formname string) (*CBaseResponse, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, "", ""); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, formname, Object); err != nil {
 		return nil, err
 	}
 
