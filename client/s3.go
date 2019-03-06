@@ -18,7 +18,7 @@ import (
 	"encoding/xml"
 	"strings"
 
-	bucket "github.com/opensds/multi-cloud/s3/pkg/model"
+	S3model "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/opensds/multi-cloud/s3/proto"
 )
 
@@ -73,7 +73,7 @@ type BucketMgr struct {
 }
 
 // CreateBucket implementation
-func (b *BucketMgr) CreateBucket(name string, body *bucket.CreateBucketConfiguration) (*CBaseResponse, error) {
+func (b *BucketMgr) CreateBucket(name string, body *S3model.CreateBucketConfiguration) (*CBaseResponse, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), name}, "/")
@@ -101,12 +101,12 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 }
 
 // ListBuckets implementation
-func (b *BucketMgr) ListBuckets() ([]*s3.Bucket, error) {
+func (b *BucketMgr) ListBuckets() ([]S3model.Bucket, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID)}, "/")
 
-	res := s3.ListBucketsResponse{}
+	res := S3model.ListAllMyBucketsResult{}
 	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
 		return nil, err
 	}
