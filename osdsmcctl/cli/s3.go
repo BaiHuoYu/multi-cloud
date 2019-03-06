@@ -43,19 +43,19 @@ var bucketCommand = &cobra.Command{
 }
 
 var bucketCreateCommand = &cobra.Command{
-	Use:   "create <bucket info>",
+	Use:   "create <bucket name>",
 	Short: "create a bucket",
 	Run:   bucketCreateAction,
 }
 
 var bucketDeleteCommand = &cobra.Command{
-	Use:   "delete <name>",
+	Use:   "delete <bucket name>",
 	Short: "delete a bucket",
 	Run:   bucketDeleteAction,
 }
 
 var bucketListCommand = &cobra.Command{
-	Use:   "list <name>",
+	Use:   "list <bucket name>",
 	Short: "list buckets",
 	Run:   bucketListAction,
 }
@@ -67,15 +67,21 @@ var objectCommand = &cobra.Command{
 }
 
 var objectListCommand = &cobra.Command{
-	Use:   "list <BucketName>",
+	Use:   "list <bucket name>",
 	Short: "list objects in a bucket",
 	Run:   objectListAction,
 }
 
 var objectUploadCommand = &cobra.Command{
-	Use:   "upload <BucketName> <object>",
+	Use:   "upload <bucket name> <object>",
 	Short: "upload object",
 	Run:   objectUploadAction,
+}
+
+var objectDownloadCommand = &cobra.Command{
+	Use:   "download <bucket name> <object>",
+	Short: "download object",
+	Run:   objectDownloadAction,
 }
 
 func init() {
@@ -88,6 +94,7 @@ func init() {
 
 	objectCommand.AddCommand(objectListCommand)
 	objectCommand.AddCommand(objectUploadCommand)
+	objectCommand.AddCommand(objectDownloadCommand)
 }
 
 func bucketAction(cmd *cobra.Command, args []string) {
@@ -136,7 +143,6 @@ func bucketDeleteAction(cmd *cobra.Command, args []string) {
 	PrintS3BaseResp(resp)
 }
 
-
 func bucketListAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 0)
 
@@ -161,11 +167,21 @@ func objectListAction(cmd *cobra.Command, args []string) {
 	PrintList(resp, keys, FormatterList{})
 }
 
-
 func objectUploadAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 2)
 
-	resp, err := client.UploadObject(args[0],args[1])
+	resp, err := client.UploadObject(args[0], args[1])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	PrintS3BaseResp(resp)
+}
+
+func objectDownloadAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 2)
+
+	resp, err := client.DownloadObject(args[0], args[1])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
