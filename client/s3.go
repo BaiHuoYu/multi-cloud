@@ -135,7 +135,7 @@ func (b *BucketMgr) UploadObject(BucketName string, Object string) (*CBaseRespon
 		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res); err != nil {
 		return nil, err
 	}
 
