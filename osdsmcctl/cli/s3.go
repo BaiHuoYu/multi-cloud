@@ -32,8 +32,8 @@ var (
 )
 
 type S3BaseResp struct {
-	ErrorCode string
-	Message   string
+	HTTPStatusCode string
+	Message        string
 }
 
 var bucketCommand = &cobra.Command{
@@ -108,12 +108,32 @@ func objectAction(cmd *cobra.Command, args []string) {
 }
 
 func PrintS3BaseResp(resp *c.CBaseResponse) {
-	S3Resp := S3BaseResp{
-		ErrorCode: resp.CErrorCode.Value,
-		Message:   resp.CMsg.Value,
+	if nil == resp {
+		return
 	}
 
-	keys := KeyList{"ErrorCode", "Message"}
+	S3Resp := S3BaseResp{
+		HTTPStatusCode: resp.CErrorCode.Value,
+		Message:        resp.CMsg.Value,
+	}
+
+	if "" == S3Resp.HTTPStatusCode && "" == S3Resp.Message {
+		return
+	}
+
+	var keys KeyList
+	if "" == S3Resp.HTTPStatusCode && "" != S3Resp.Message {
+		keys = KeyList{"Message"}
+	}
+
+	if "" != S3Resp.HTTPStatusCode && "" == S3Resp.Message {
+		keys = KeyList{"HTTPStatusCode"}
+	}
+
+	if "" != S3Resp.HTTPStatusCode && "" != S3Resp.Message {
+		keys = KeyList{"HTTPStatusCode", "Message"}
+	}
+
 	PrintDict(S3Resp, keys, FormatterList{})
 }
 
