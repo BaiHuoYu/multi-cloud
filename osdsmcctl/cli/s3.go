@@ -112,26 +112,17 @@ func PrintS3BaseResp(resp *c.CBaseResponse) {
 		return
 	}
 
-	S3Resp := S3BaseResp{
-		HTTPStatusCode: resp.CErrorCode.Value,
-		Message:        resp.CMsg.Value,
-	}
-
-	if "" == S3Resp.HTTPStatusCode && "" == S3Resp.Message {
-		return
-	}
-
+	var S3Resp S3BaseResp
 	var keys KeyList
-	if "" == S3Resp.HTTPStatusCode && "" != S3Resp.Message {
-		keys = KeyList{"Message"}
+
+	if (nil != resp.CErrorCode) && ("" != resp.CErrorCode.Value) {
+		S3Resp.HTTPStatusCode = resp.CErrorCode.Value
+		keys = append(keys, "HTTPStatusCode")
 	}
 
-	if "" != S3Resp.HTTPStatusCode && "" == S3Resp.Message {
-		keys = KeyList{"HTTPStatusCode"}
-	}
-
-	if "" != S3Resp.HTTPStatusCode && "" != S3Resp.Message {
-		keys = KeyList{"HTTPStatusCode", "Message"}
+	if (nil != resp.CMsg) && ("" != resp.CMsg.Value) {
+		S3Resp.Message = resp.CMsg.Value
+		keys = append(keys, "Message")
 	}
 
 	PrintDict(S3Resp, keys, FormatterList{})
