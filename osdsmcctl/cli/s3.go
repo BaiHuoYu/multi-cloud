@@ -78,6 +78,7 @@ func init() {
 	bucketCreateCommand.Flags().StringVarP(&locationconstraint, "locationconstraint", "l", "", "the location constraint of updated bucket")
 
 	bucketCommand.AddCommand(bucketDeleteCommand)
+	bucketCommand.AddCommand(bucketListCommand)
 
 	objectCommand.AddCommand(objectListCommand)
 }
