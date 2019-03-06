@@ -70,7 +70,8 @@ type HeaderOption map[string]string
 
 // Receiver implementation
 type Receiver interface {
-	Recv(url string, method string, headers HeaderOption, input interface{}, output interface{}) error
+	Recv(url string, method string, headers HeaderOption,
+		reqBody interface{}, respBody interface{}, formname string, filename string) error
 }
 
 // NewReceiver implementation
@@ -79,7 +80,8 @@ func NewReceiver() Receiver {
 }
 
 // request implementation
-func request(url string, method string, headers HeaderOption, input interface{}, output interface{}) error {
+func request(url string, method string, headers HeaderOption,
+	reqBody interface{}, respBody interface{}, formname string, filename string) error {
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
 	req.SetTimeout(time.Minute*6, time.Minute*6)
@@ -91,19 +93,19 @@ func request(url string, method string, headers HeaderOption, input interface{},
 			"Content-Type must be configured in the header")
 	}
 
-	if input != nil {
+	if reqBody != nil {
 		var body []byte
 		var err error
 
 		switch contentType {
 		case constants.HeaderValueJson:
-			body, err = json.MarshalIndent(input, "", "  ")
+			body, err = json.MarshalIndent(reqBody, "", "  ")
 			if err != nil {
 				return err
 			}
 			break
 		case constants.HeaderValueXml:
-			body, err = xml.Marshal(input)
+			body, err = xml.Marshal(reqBody)
 			if err != nil {
 				return err
 			}
@@ -114,6 +116,10 @@ func request(url string, method string, headers HeaderOption, input interface{},
 
 		log.Printf("Request body:\n%s\n", string(body))
 		req.Body(body)
+	}
+
+	if "" != formname && "" != filename {
+		req.PostFile(formname, filename)
 	}
 
 	//init header
@@ -141,18 +147,18 @@ func request(url string, method string, headers HeaderOption, input interface{},
 		return NewHTTPError(resp.StatusCode, string(rbody))
 	}
 
-	if (output == nil) || (nil == rbody) || ("" == string(rbody)) {
+	if (respBody == nil) || (nil == rbody) || ("" == string(rbody)) {
 		return nil
 	}
 
 	switch contentType {
 	case constants.HeaderValueJson:
-		if err = json.Unmarshal(rbody, output); err != nil {
+		if err = json.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
 		}
 		break
 	case constants.HeaderValueXml:
-		if err = xml.Unmarshal(rbody, output); err != nil {
+		if err = xml.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
 		}
 		break
@@ -165,8 +171,9 @@ func request(url string, method string, headers HeaderOption, input interface{},
 
 type receiver struct{}
 
-func (*receiver) Recv(url string, method string, headers HeaderOption, input interface{}, output interface{}) error {
-	return request(url, method, headers, input, output)
+func (*receiver) Recv(url string, method string, headers HeaderOption,
+	reqBody interface{}, respBody interface{}, formname string, filename string) error {
+	return request(url, method, headers, reqBody, respBody, formname, filename)
 }
 
 // NewKeystoneReciver implementation
@@ -220,7 +227,8 @@ func (k *KeystoneReciver) GetToken() error {
 }
 
 // Recv implementation
-func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption, body interface{}, output interface{}) error {
+func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
+	reqBody interface{}, respBody interface{}, formname string, filename string) error {
 	desc := fmt.Sprintf("%s %s", method, url)
 	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
 		if retryIdx > 0 {
@@ -235,7 +243,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption, 
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
 
-		return request(url, method, headers, body, output)
+		return request(url, method, headers, reqBody, respBody, formname, filename)
 	})
 }
 

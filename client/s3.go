@@ -79,7 +79,7 @@ func (b *BucketMgr) CreateBucket(name string, body *S3model.CreateBucketConfigur
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, body, &res); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, body, &res, "", ""); err != nil {
 		return nil, err
 	}
 
@@ -93,7 +93,7 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, "", ""); err != nil {
 		return nil, err
 	}
 
@@ -107,7 +107,7 @@ func (b *BucketMgr) ListBuckets() ([]S3model.Bucket, error) {
 		GenerateS3URL(b.TenantID)}, "/")
 
 	res := S3model.ListAllMyBucketsResult{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
 		return nil, err
 	}
 
@@ -121,7 +121,7 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 		GenerateS3URL(b.TenantID), BucketName}, "/")
 
 	res := s3.ListObjectResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
 		return nil, err
 	}
 
@@ -135,7 +135,7 @@ func (b *BucketMgr) UploadObject(BucketName string, Object string) (*CBaseRespon
 		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, "", ""); err != nil {
 		return nil, err
 	}
 
@@ -149,7 +149,7 @@ func (b *BucketMgr) DownloadObject(BucketName string, Object string) (*CBaseResp
 		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
 		return nil, err
 	}
 

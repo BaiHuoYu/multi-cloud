@@ -125,7 +125,9 @@ func PrintS3BaseResp(resp *c.CBaseResponse) {
 		keys = append(keys, "Message")
 	}
 
-	PrintDict(S3Resp, keys, FormatterList{})
+	if len(keys) != 0 {
+		PrintDict(S3Resp, keys, FormatterList{})
+	}
 }
 
 func bucketCreateAction(cmd *cobra.Command, args []string) {
