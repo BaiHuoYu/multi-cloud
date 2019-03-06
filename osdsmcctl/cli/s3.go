@@ -60,6 +60,12 @@ var bucketDeleteCommand = &cobra.Command{
 	Run:   bucketDeleteAction,
 }
 
+var bucketListCommand = &cobra.Command{
+	Use:   "list <name>",
+	Short: "list buckets",
+	Run:   bucketListAction,
+}
+
 var objectListCommand = &cobra.Command{
 	Use:   "list <BucketName>",
 	Short: "list objects in a bucket",
@@ -122,6 +128,19 @@ func bucketDeleteAction(cmd *cobra.Command, args []string) {
 	PrintS3BaseResp(resp)
 }
 
+
+func bucketListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+
+	resp, err := client.ListBuckets()
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	keys := KeyList{"Name", "CreationDate", "LocationConstraint"}
+	PrintList(resp, keys, FormatterList{})
+}
+
 func objectListAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
@@ -131,5 +150,5 @@ func objectListAction(cmd *cobra.Command, args []string) {
 	}
 
 	keys := KeyList{"ObjectKey", "BucketName", "Size", "Backend"}
-	PrintList(resp.ListObjects, keys, FormatterList{})
+	PrintList(resp, keys, FormatterList{})
 }

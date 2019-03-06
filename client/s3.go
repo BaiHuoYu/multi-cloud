@@ -100,8 +100,22 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 	return &res, nil
 }
 
+// ListBuckets implementation
+func (b *BucketMgr) ListBuckets() ([]*s3.Bucket, error) {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateS3URL(b.TenantID)}, "/")
+
+	res := s3.ListBucketsResponse{}
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res); err != nil {
+		return nil, err
+	}
+
+	return res.Buckets, nil
+}
+
 // ListObjects implementation
-func (b *BucketMgr) ListObjects(BucketName string) (*s3.ListObjectResponse, error) {
+func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName}, "/")
@@ -111,5 +125,5 @@ func (b *BucketMgr) ListObjects(BucketName string) (*s3.ListObjectResponse, erro
 		return nil, err
 	}
 
-	return &res, nil
+	return res.ListObjects, nil
 }
