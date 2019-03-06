@@ -141,8 +141,7 @@ func request(url string, method string, headers HeaderOption, input interface{},
 		return NewHTTPError(resp.StatusCode, string(rbody))
 	}
 
-	// If the format of output is nil, skip unmarshaling the result.
-	if output == nil {
+	if (output == nil) || (nil == rbody) || ("" == string(rbody)) {
 		return nil
 	}
 
