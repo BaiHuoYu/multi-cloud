@@ -130,7 +130,7 @@ func request(url string, method string, headers HeaderOption,
 		}
 	}
 
-	log.Printf("req=%+v\n", req)
+	log.Printf("req=%+v, headers=%v\n", req, headers)
 	// Get http response.
 	resp, err := req.Response()
 	if err != nil {
