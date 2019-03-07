@@ -119,16 +119,16 @@ func request(url string, method string, headers HeaderOption,
 		req.Body(body)
 	}
 
-	if "" != ObjectKey && "" != Object {
-		req.PostFile(ObjectKey, Object)
-	}
+	//if "" != ObjectKey && "" != Object {
+	//	req.PostFile(ObjectKey, Object)
+	//}
 
 	//init header
-	//if headers != nil {
-	//	for k, v := range headers {
-	//		req.Header(k, v)
-	//	}
-	//}
+	if headers != nil {
+		for k, v := range headers {
+			req.Header(k, v)
+		}
+	}
 
 	log.Printf("req=%+v\n", req)
 	// Get http response.
