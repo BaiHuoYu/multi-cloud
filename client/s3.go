@@ -16,8 +16,10 @@ package client
 
 import (
 	"encoding/xml"
+	"io/ioutil"
 	"strings"
 
+	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
 	S3model "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/opensds/multi-cloud/s3/proto"
 )
@@ -129,13 +131,22 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 }
 
 // UploadObject implementation
-func (b *BucketMgr) UploadObject(BucketName, Object, formname string) (*CBaseResponse, error) {
+func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseResponse, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
+		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, formname, Object); err != nil {
+	buf, err := ioutil.ReadFile(Object)
+	if err != nil {
+		return &res, err
+	}
+
+	Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
+		obs.HEADER_CONTENT_LENGTH: string(len(buf)),
+	}
+
+	if err := b.Recv(url, "PUT", Headers, nil, &res, ObjectKey, Object); err != nil {
 		return nil, err
 	}
 

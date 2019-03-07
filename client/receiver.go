@@ -31,6 +31,7 @@ import (
 	"github.com/opensds/multi-cloud/api/pkg/model"
 	"github.com/opensds/multi-cloud/api/pkg/utils"
 	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
+	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
 )
 
 // NewHTTPError implementation
@@ -71,7 +72,7 @@ type HeaderOption map[string]string
 // Receiver implementation
 type Receiver interface {
 	Recv(url string, method string, headers HeaderOption,
-		reqBody interface{}, respBody interface{}, formname string, filename string) error
+		reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error
 }
 
 // NewReceiver implementation
@@ -81,13 +82,13 @@ func NewReceiver() Receiver {
 
 // request implementation
 func request(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, formname string, filename string) error {
+	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
 	req.SetTimeout(time.Minute*6, time.Minute*6)
 	// init body
 	log.Printf("%s %s\n", strings.ToUpper(method), url)
-	contentType, ok := headers[constants.HeaderKeyContentType]
+	contentType, ok := headers[obs.HEADER_CONTENT_TYPE]
 	if !ok {
 		return NewHTTPError(http.StatusInternalServerError,
 			"Content-Type must be configured in the header")
@@ -118,8 +119,8 @@ func request(url string, method string, headers HeaderOption,
 		req.Body(body)
 	}
 
-	if "" != formname && "" != filename {
-		req.PostFile(formname, filename)
+	if "" != ObjectKey && "" != Object {
+		req.PostFile(ObjectKey, Object)
 	}
 
 	//init header
@@ -172,8 +173,8 @@ func request(url string, method string, headers HeaderOption,
 type receiver struct{}
 
 func (*receiver) Recv(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, formname string, filename string) error {
-	return request(url, method, headers, reqBody, respBody, formname, filename)
+	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
+	return request(url, method, headers, reqBody, respBody, ObjectKey, Object)
 }
 
 // NewKeystoneReciver implementation
@@ -228,7 +229,7 @@ func (k *KeystoneReciver) GetToken() error {
 
 // Recv implementation
 func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, formname string, filename string) error {
+	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
 	desc := fmt.Sprintf("%s %s", method, url)
 	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
 		if retryIdx > 0 {
@@ -241,9 +242,9 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 		}
 
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
-		headers[constants.HeaderKeyContentType] = constants.HeaderValueJson
+		headers[obs.HEADER_CONTENT_TYPE] = constants.HeaderValueJson
 
-		return request(url, method, headers, reqBody, respBody, formname, filename)
+		return request(url, method, headers, reqBody, respBody, ObjectKey, Object)
 	})
 }
 

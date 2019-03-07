@@ -17,12 +17,12 @@ package client
 import (
 	"strings"
 
-	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
+	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
 )
 
 var (
-	JsonHeaders = HeaderOption{constants.HeaderKeyContentType: constants.HeaderValueJson}
-	XmlHeaders  = HeaderOption{constants.HeaderKeyContentType: constants.HeaderValueXml}
+	JsonHeaders = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/json"}
+	XmlHeaders  = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml"}
 )
 
 // GenerateBackendURL implementation
@@ -57,7 +57,7 @@ func GenerateS3URL(tenantID string, in ...string) string {
 
 // CurrentVersion implementation
 func CurrentVersion() string {
-	return constants.APIVersion
+	return "v1"
 }
 
 func generateURL(resource string, tenantID string, in ...string) string {

@@ -28,9 +28,7 @@ const (
 	AuthTokenHeader    = "X-Auth-Token"
 	SubjectTokenHeader = "X-Subject-Token"
 
-	// Header item key: Content-Type
-	HeaderKeyContentType = "Content-Type"
-	// Header item value: "application/json"
+	
 	HeaderValueJson = "application/json"
 	HeaderValueXml  = "application/xml"
 
