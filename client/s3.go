@@ -17,6 +17,7 @@ package client
 import (
 	"encoding/xml"
 	"io/ioutil"
+	"log"
 	"strings"
 
 	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
@@ -142,6 +143,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 		return &res, err
 	}
 
+	log.Printf("len(buf)=%+v\n", string(len(buf)))
 	Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
 		obs.HEADER_CONTENT_LENGTH: string(len(buf)),
 	}
