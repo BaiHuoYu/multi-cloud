@@ -18,6 +18,7 @@ import (
 	"encoding/xml"
 	"io/ioutil"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
@@ -143,9 +144,9 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 		return &res, err
 	}
 
-	log.Printf("buf=%+v,len(buf)=%+v!\n", buf, len(buf))
+	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
 	Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
-		obs.HEADER_CONTENT_LENGTH: string(len(buf)),
+		obs.HEADER_CONTENT_LENGTH: strconv.Itoa(len(buf)),
 	}
 
 	if err := b.Recv(url, "PUT", Headers, nil, &res, ObjectKey, Object); err != nil {
