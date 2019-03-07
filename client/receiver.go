@@ -119,9 +119,9 @@ func request(url string, method string, headers HeaderOption,
 		req.Body(body)
 	}
 
-	//if "" != ObjectKey && "" != Object {
-	//	req.PostFile(ObjectKey, Object)
-	//}
+	if "" != ObjectKey && "" != Object {
+		req.PostFile(ObjectKey, Object)
+	}
 
 	//init header
 	if headers != nil {
