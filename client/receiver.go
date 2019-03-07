@@ -124,11 +124,11 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	//init header
-	if headers != nil {
-		for k, v := range headers {
-			req.Header(k, v)
-		}
-	}
+	//if headers != nil {
+	//	for k, v := range headers {
+	//		req.Header(k, v)
+	//	}
+	//}
 
 	log.Printf("req=%+v\n", req)
 	// Get http response.
