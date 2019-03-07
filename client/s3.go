@@ -147,7 +147,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
 	Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
 		obs.HEADER_CONTENT_LENGTH:     strconv.Itoa(len(buf)),
-		obs.HEADER_STORAGE_CLASS2_AMZ: "",
+		obs.HEADER_STORAGE_CLASS2_AMZ: "STORAGE_CLASS2_AMZ",
 	}
 
 	if err := b.Recv(url, "PUT", Headers, nil, &res, ObjectKey, Object); err != nil {
