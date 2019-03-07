@@ -16,12 +16,8 @@ package client
 
 import (
 	"encoding/xml"
-	"io/ioutil"
-	"log"
-	"strconv"
 	"strings"
 
-	"github.com/opensds/multi-cloud/api/pkg/utils/obs"
 	S3model "github.com/opensds/multi-cloud/s3/pkg/model"
 	"github.com/opensds/multi-cloud/s3/proto"
 )
@@ -139,17 +135,17 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
 	res := CBaseResponse{}
-	buf, err := ioutil.ReadFile(Object)
-	if err != nil {
-		return &res, err
-	}
+	//buf, err := ioutil.ReadFile(Object)
+	//if err != nil {
+	//	return &res, err
+	//}
 
-	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
-	Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
-		obs.HEADER_CONTENT_LENGTH: strconv.Itoa(len(buf)),
-	}
+	//log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
+	//Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
+	//	obs.HEADER_CONTENT_LENGTH: strconv.Itoa(len(buf)),
+	//}
 
-	if err := b.Recv(url, "PUT", Headers, nil, &res, ObjectKey, Object); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, ObjectKey, Object); err != nil {
 		return nil, err
 	}
 
