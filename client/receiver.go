@@ -83,6 +83,15 @@ func NewReceiver() Receiver {
 // request implementation
 func request(url string, method string, headers HeaderOption,
 	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
+	if "" != ObjectKey {
+		b := httplib.Put(url)
+		b.PostFile(ObjectKey, Object)
+
+		rssp, err := b.Response()
+		log.Printf("rssp:%+v\n err%s\n", rssp, err)
+		return nil
+	}
+
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
 	req.SetTimeout(time.Minute*6, time.Minute*6)
@@ -90,9 +99,7 @@ func request(url string, method string, headers HeaderOption,
 	log.Printf("%s %s\n", strings.ToUpper(method), url)
 	contentType, ok := headers[obs.HEADER_CONTENT_TYPE]
 	if !ok {
-		//return NewHTTPError(http.StatusInternalServerError,
-		//	"Content-Type must be configured in the header")
-		log.Printf("Content-Type was not be configured in the header")
+		log.Printf("Content-Type was not be configured in the request header")
 	}
 
 	if reqBody != nil {
@@ -153,17 +160,12 @@ func request(url string, method string, headers HeaderOption,
 		return nil
 	}
 
-	//respContentType, ok := resp.Header[obs.HEADER_CONTENT_TYPE]
-	//if !ok {
-	//return NewHTTPError(http.StatusInternalServerError,
-	//	"Content-Type must be configured in the header")
-	//	log.Printf("respContentType was not be configured in the header")
-	//}
+	respContentTypes, ok := resp.Header[obs.HEADER_CONTENT_TYPE]
+	if !ok || 0 == len(respContentTypes) {
+		log.Printf("content-type was not be configured in the response header")
+	}
 
-	log.Printf("resp.Header:%+v\n", resp.Header)
-	respContentType := constants.HeaderValueXml
-
-	switch respContentType {
+	switch respContentTypes[0] {
 	case constants.HeaderValueJson:
 		if err = json.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)

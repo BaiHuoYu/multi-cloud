@@ -20,6 +20,7 @@ package cli
 
 import (
 	"os"
+	"fmt"
 
 	c "github.com/opensds/multi-cloud/client"
 	s3 "github.com/opensds/multi-cloud/s3/pkg/model"
@@ -188,8 +189,8 @@ func objectUploadAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-
-	PrintS3BaseResp(resp)
+	
+	fmt.Print(resp)
 }
 
 func objectDownloadAction(cmd *cobra.Command, args []string) {

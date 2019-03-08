@@ -129,26 +129,18 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 }
 
 // UploadObject implementation
-func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseResponse, error) {
+func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (string, error) {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
-	res := CBaseResponse{}
-	//buf, err := ioutil.ReadFile(Object)
-	//if err != nil {
-	//	return &res, err
-	//}
-
-	//Headers := HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml",
-	//	obs.HEADER_CONTENT_LENGTH: strconv.Itoa(len(buf)),
-	//}
-
-	if err := b.Recv(url, "PUT", nil, nil, &res, ObjectKey, Object); err != nil {
-		return nil, err
+	//res, err := exec.Command("curl", "-H", "Content-type: application/xml", "-X",
+	//	"PUT", "-T", Object, url).CombinedOutput()
+	if err := b.Recv(url, "PUT", nil, nil, nil, ObjectKey, Object); err != nil {
+		return "", err
 	}
 
-	return &res, nil
+	return "", nil
 }
 
 // DownloadObject implementation
