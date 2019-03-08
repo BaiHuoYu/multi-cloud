@@ -144,7 +144,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 	//	obs.HEADER_CONTENT_LENGTH: strconv.Itoa(len(buf)),
 	//}
 
-	if err := b.Recv(url, "PUT", XmlHeaders, nil, &res, ObjectKey, Object); err != nil {
+	if err := b.Recv(url, "PUT", nil, nil, &res, ObjectKey, Object); err != nil {
 		return nil, err
 	}
 
