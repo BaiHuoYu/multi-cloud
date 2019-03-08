@@ -153,12 +153,17 @@ func request(url string, method string, headers HeaderOption,
 		return nil
 	}
 
+	log.Printf("resp.Header %v", resp.Header)
 	respContentTypes, ok := resp.Header[obs.HEADER_CONTENT_TYPE]
+	var respContentType string
 	if !ok || 0 == len(respContentTypes) {
 		log.Printf("content-type was not be configured in the response header")
+		respContentType = contentType
+	} else {
+		respContentType = respContentTypes[0]
 	}
 
-	switch respContentTypes[0] {
+	switch respContentType {
 	case constants.HeaderValueJson:
 		if err = json.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
