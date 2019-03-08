@@ -83,15 +83,6 @@ func NewReceiver() Receiver {
 // request implementation
 func request(url string, method string, headers HeaderOption,
 	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
-	if "" != ObjectKey {
-		b := httplib.Put(url)
-		b.PostFile(ObjectKey, Object)
-
-		rssp, err := b.Response()
-		log.Printf("rssp:%+v\n err%s\n", rssp, err)
-		return nil
-	}
-
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
 	req.SetTimeout(time.Minute*6, time.Minute*6)
@@ -114,9 +105,11 @@ func request(url string, method string, headers HeaderOption,
 			}
 			break
 		case constants.HeaderValueXml:
-			body, err = xml.Marshal(reqBody)
-			if err != nil {
-				return err
+			if "" == ObjectKey {
+				body, err = xml.Marshal(reqBody)
+				if err != nil {
+					return err
+				}
 			}
 			break
 		default:
@@ -124,11 +117,11 @@ func request(url string, method string, headers HeaderOption,
 		}
 
 		log.Printf("Request body:\n%s\n", string(body))
-		req.Body(body)
-	}
-
-	if "" != ObjectKey && "" != Object {
-		req.PostFile(ObjectKey, Object)
+		if "" == ObjectKey {
+			req.Body(body)
+		} else {
+			req.Body(reqBody)
+		}
 	}
 
 	//init header
