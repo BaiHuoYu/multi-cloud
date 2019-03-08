@@ -154,7 +154,7 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	log.Printf("resp.Header %v", resp.Header)
-	respContentTypes, ok := resp.Header[obs.HEADER_CONTENT_TYPE]
+	respContentTypes, ok := resp.Header["Content-Type"]
 	var respContentType string
 	log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
 
