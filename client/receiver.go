@@ -156,6 +156,8 @@ func request(url string, method string, headers HeaderOption,
 	log.Printf("resp.Header %v", resp.Header)
 	respContentTypes, ok := resp.Header[obs.HEADER_CONTENT_TYPE]
 	var respContentType string
+	log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
+
 	if !ok || 0 == len(respContentTypes) {
 		log.Printf("content-type was not be configured in the response header")
 		respContentType = contentType
