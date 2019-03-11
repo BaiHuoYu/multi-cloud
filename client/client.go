@@ -56,8 +56,9 @@ func NewClient(c *Config) *Client {
 
 	t := c.AuthOptions.GetTenantID()
 	return &Client{
-		cfg:        c,
-		BackendMgr: NewBackendMgr(r, c.Endpoint, t),
-		BucketMgr:  NewBucketMgr(r, c.Endpoint, t),
+		cfg:         c,
+		BackendMgr:  NewBackendMgr(r, c.Endpoint, t),
+		BucketMgr:   NewBucketMgr(r, c.Endpoint, t),
+		DataflowMgr: NewDataflowMgr(r, c.Endpoint, t),
 	}
 }
