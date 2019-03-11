@@ -105,6 +105,7 @@ func init() {
 	rootCommand.AddCommand(backendCommand)
 	rootCommand.AddCommand(bucketCommand)
 	rootCommand.AddCommand(objectCommand)
+	rootCommand.AddCommand(planCommand)
 	flags := rootCommand.PersistentFlags()
 	flags.BoolVar(&Debug, "debug", false, "shows debugging output.")
 }
