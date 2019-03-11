@@ -181,7 +181,8 @@ func request(url string, method string, headers HeaderOption,
 		}
 		break
 	case constants.HeaderValueText:
-		file, err := os.Create(ObjectKey)
+		path := fmt.Sprintf("./%s", ObjectKey)
+		file, err := os.Create(path)
 		if err != nil {
 			log.Printf("Failed to create file:%+v\n", err)
 		}
@@ -191,6 +192,7 @@ func request(url string, method string, headers HeaderOption,
 		if err != nil {
 			log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
 		}
+		log.Printf("Save file successfully, n:%+v\n", n)
 		break
 	default:
 		log.Printf("respContentType is not application/json nor application/xml\n")
