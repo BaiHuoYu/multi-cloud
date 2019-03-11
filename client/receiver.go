@@ -138,20 +138,19 @@ func request(url string, method string, headers HeaderOption,
 	if err != nil {
 		return err
 	}
+	
+	if 400 <= resp.StatusCode && resp.StatusCode <= 599 {
+		return NewHTTPError(resp.StatusCode, "")
+	}
 
-	log.Printf("resp=%+v\n", resp)
-	defer resp.Body.Close()
 	rbody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
-
+	
+	defer resp.Body.Close()
 	log.Printf("\nStatusCode: %s\nResponse Body:\n%s\n", resp.Status, string(rbody))
-	if 400 <= resp.StatusCode && resp.StatusCode <= 599 {
-		return NewHTTPError(resp.StatusCode, string(rbody))
-	}
-
-	if (respBody == nil) || (nil == rbody) || ("" == string(rbody)) {
+	if (nil == rbody) || ("" == string(rbody)) {
 		return nil
 	}
 
