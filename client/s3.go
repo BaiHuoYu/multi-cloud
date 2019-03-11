@@ -165,3 +165,17 @@ func (b *BucketMgr) DownloadObject(BucketName string, ObjectKey string) error {
 
 	return nil
 }
+
+// DeleteObject implementation
+func (b *BucketMgr) DeleteObject(BucketName string, ObjectKey string) (*CBaseResponse, error) {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
+
+	res := CBaseResponse{}
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
+		return &res, err
+	}
+
+	return &res, nil
+}

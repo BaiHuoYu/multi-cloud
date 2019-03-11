@@ -85,6 +85,14 @@ var objectDownloadCommand = &cobra.Command{
 	Run:   objectDownloadAction,
 }
 
+
+var objectDeleteCommand = &cobra.Command{
+	Use:   "delete <bucket name> <object>",
+	Short: "delete object",
+	Run:   objectDeleteAction,
+}
+
+
 func init() {
 	bucketCommand.AddCommand(bucketCreateCommand)
 	bucketCreateCommand.Flags().StringVarP(&xmlns, "xmlns", "x", "", "the xmlns of updated bucket")
@@ -96,6 +104,7 @@ func init() {
 	objectCommand.AddCommand(objectListCommand)
 	objectCommand.AddCommand(objectUploadCommand)
 	objectCommand.AddCommand(objectDownloadCommand)
+	objectCommand.AddCommand(objectDeleteCommand)
 }
 
 func bucketAction(cmd *cobra.Command, args []string) {
@@ -200,4 +209,15 @@ func objectDownloadAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
+}
+
+func objectDeleteAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 2)
+
+	resp,err := client.DeleteObject(args[0], args[1])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	
+	PrintS3BaseResp(resp)
 }
