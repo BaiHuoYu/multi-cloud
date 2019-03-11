@@ -24,6 +24,7 @@ import (
 type Client struct {
 	*BackendMgr
 	*BucketMgr
+	*DataflowMgr
 
 	cfg *Config
 }
