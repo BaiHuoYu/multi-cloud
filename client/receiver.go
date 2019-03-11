@@ -138,7 +138,7 @@ func request(url string, method string, headers HeaderOption,
 	if err != nil {
 		return err
 	}
-	
+
 	if 400 <= resp.StatusCode && resp.StatusCode <= 599 {
 		return NewHTTPError(resp.StatusCode, "")
 	}
@@ -147,7 +147,7 @@ func request(url string, method string, headers HeaderOption,
 	if err != nil {
 		return err
 	}
-	
+
 	defer resp.Body.Close()
 	log.Printf("\nStatusCode: %s\nResponse Body:\n%s\n", resp.Status, string(rbody))
 	if (nil == rbody) || ("" == string(rbody)) {
@@ -179,22 +179,23 @@ func request(url string, method string, headers HeaderOption,
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
 		}
 		break
-	case constants.HeaderValueText:
-		path := fmt.Sprintf("./%s", ObjectKey)
-		file, err := os.Create(path)
-		if err != nil {
-			log.Printf("Failed to create file:%+v\n", err)
-		}
-		defer file.Close()
-
-		n, err := file.Write(rbody)
-		if err != nil {
-			log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
-		}
-		log.Printf("Save file successfully, n:%+v\n", n)
-		break
 	default:
-		log.Printf("respContentType is not application/json nor application/xml\n")
+		if "" != ObjectKey {
+			path := fmt.Sprintf("./%s", ObjectKey)
+			file, err := os.Create(path)
+			if err != nil {
+				log.Printf("Failed to create file:%+v\n", err)
+			}
+			defer file.Close()
+
+			n, err := file.Write(rbody)
+			if err != nil {
+				log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
+			}
+			log.Printf("Save file successfully, n:%+v\n", n)
+		} else {
+			log.Printf("Failure to process the response body!")
+		}
 	}
 
 	return nil
