@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -139,6 +140,7 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	log.Printf("resp=%+v\n", resp)
+	defer resp.Body.Close()
 	rbody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -165,6 +167,8 @@ func request(url string, method string, headers HeaderOption,
 		respContentType = respContentTypes[0]
 	}
 
+	log.Printf("Response content type is %+v\n", respContentType)
+
 	switch respContentType {
 	case constants.HeaderValueJson:
 		if err = json.Unmarshal(rbody, respBody); err != nil {
@@ -174,6 +178,18 @@ func request(url string, method string, headers HeaderOption,
 	case constants.HeaderValueXml:
 		if err = xml.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
+		}
+		break
+	case constants.HeaderValueText:
+		file, err := os.Create(ObjectKey)
+		if err != nil {
+			log.Printf("Failed to create file:%+v\n", err)
+		}
+		defer file.Close()
+
+		n, err := file.Write(rbody)
+		if err != nil {
+			log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
 		}
 		break
 	default:

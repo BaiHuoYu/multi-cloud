@@ -28,9 +28,9 @@ const (
 	AuthTokenHeader    = "X-Auth-Token"
 	SubjectTokenHeader = "X-Subject-Token"
 
-	
 	HeaderValueJson = "application/json"
 	HeaderValueXml  = "application/xml"
+	HeaderValueText = "text/plain"
 
 	// OpenSDS multi-cloud current api version
 	APIVersion = "v1"

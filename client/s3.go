@@ -154,15 +154,14 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 }
 
 // DownloadObject implementation
-func (b *BucketMgr) DownloadObject(BucketName string, Object string) (*CBaseResponse, error) {
+func (b *BucketMgr) DownloadObject(BucketName string, ObjectKey string) error {
 	url := strings.Join([]string{
 		b.Endpoint,
-		GenerateS3URL(b.TenantID), BucketName, Object}, "/")
+		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
-	res := CBaseResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
-		return nil, err
+	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, ObjectKey, ""); err != nil {
+		return err
 	}
 
-	return &res, nil
+	return nil
 }
