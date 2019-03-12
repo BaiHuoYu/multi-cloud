@@ -38,11 +38,30 @@ var planCreateCommand = &cobra.Command{
 	Run:   planCreateAction,
 }
 
+var policyCommand = &cobra.Command{
+	Use:   "policy",
+	Short: "manage policies in the multi-cloud",
+	Run:   policyAction,
+}
+
+var policyCreateCommand = &cobra.Command{
+	Use:   "create <policy info>",
+	Short: "create a policy",
+	Run:   policyCreateAction,
+}
+
 func init() {
 	planCommand.AddCommand(planCreateCommand)
+
+	policyCommand.AddCommand(policyCreateCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
+	cmd.Usage()
+	os.Exit(1)
+}
+
+func policyAction(cmd *cobra.Command, args []string) {
 	cmd.Usage()
 	os.Exit(1)
 }
@@ -63,5 +82,22 @@ func planCreateAction(cmd *cobra.Command, args []string) {
 	keys := KeyList{"Id", "Name", "Description", "Type", "PolicyId", "PolicyName",
 		"SourceConn", "DestConn", "Filter", "RemainSource", "TenantId", "UserId",
 		"PolicyEnabled"}
+	PrintDict(resp, keys, FormatterList{})
+}
+
+func policyCreateAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+	policy := &dataflow.Policy{}
+	if err := json.Unmarshal([]byte(args[0]), policy); err != nil {
+		Errorln(err)
+		cmd.Usage()
+		os.Exit(1)
+	}
+
+	resp, err := client.CreatePolicy(policy)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
 	PrintDict(resp, keys, FormatterList{})
 }

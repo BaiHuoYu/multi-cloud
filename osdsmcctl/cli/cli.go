@@ -106,6 +106,7 @@ func init() {
 	rootCommand.AddCommand(bucketCommand)
 	rootCommand.AddCommand(objectCommand)
 	rootCommand.AddCommand(planCommand)
+	rootCommand.AddCommand(policyCommand)
 	rootCommand.AddCommand(typeCommand)
 
 	flags := rootCommand.PersistentFlags()
