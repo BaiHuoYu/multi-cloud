@@ -84,11 +84,9 @@ func NewReceiver() Receiver {
 // request implementation
 func request(url string, method string, headers HeaderOption,
 	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
+	log.Printf("url=%+v\n, method=%+v\n, headers=%+v\n, reqBody=%+v\n, respBody=%+v\n, ObjectKey=%+v\n,  Object=%+v\n")
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
-	// Set the request timeout a little bit longer upload snapshot to cloud temporarily.
 	req.SetTimeout(time.Minute*6, time.Minute*6)
-	// init body
-	log.Printf("%s %s\n", strings.ToUpper(method), url)
 	contentType, ok := headers[obs.HEADER_CONTENT_TYPE]
 	if !ok {
 		log.Printf("Content-Type was not be configured in the request header")
@@ -132,7 +130,6 @@ func request(url string, method string, headers HeaderOption,
 		}
 	}
 
-	log.Printf("req=%+v, headers=%v\n", req, headers)
 	// Get http response.
 	resp, err := req.Response()
 	if err != nil {
@@ -140,44 +137,42 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	if 400 <= resp.StatusCode && resp.StatusCode <= 599 {
+		log.Printf("Response statusCode: %+v\n", resp.StatusCode)
 		return NewHTTPError(resp.StatusCode, "")
 	}
 
 	rbody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Printf("ioutil.ReadAll failed, err: %+v\n", err)
 		return err
 	}
 
 	defer resp.Body.Close()
-	log.Printf("\nStatusCode: %s\nResponse Body:\n%s\n", resp.Status, string(rbody))
+	log.Printf("Response Status: %s\nResponse Body:\n%s\n", resp.Status, string(rbody))
 	if (nil == rbody) || ("" == string(rbody)) {
 		return nil
 	}
 
-	log.Printf("resp.Header %v", resp.Header)
-	respContentTypes, ok := resp.Header["Content-Type"]
 	var respContentType string
+	respContentTypes, ok := resp.Header["Content-Type"]
 	log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
 
-	if !ok || 0 == len(respContentTypes) {
-		log.Printf("content-type was not be configured in the response header")
-		respContentType = contentType
-	} else {
+	if ok && len(respContentTypes) > 0 {
 		respContentType = respContentTypes[0]
 	}
-
-	log.Printf("Response content type is %+v\n", respContentType)
 
 	switch respContentType {
 	case constants.HeaderValueJson:
 		if err = json.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
 		}
+		log.Printf("application/json, respBody=%+v\n", respBody)
 		break
 	case constants.HeaderValueXml:
 		if err = xml.Unmarshal(rbody, respBody); err != nil {
 			return fmt.Errorf("failed to unmarshal result message: %v", err)
 		}
+		log.Printf("application/xml, respBody=%+v\n", respBody)
 		break
 	default:
 		if "" != ObjectKey {
