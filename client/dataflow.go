@@ -52,7 +52,7 @@ func (b *BackendMgr) CreatePlan(body *dataflow.Plan) (*dataflow.Plan, error) {
 
 // CreatePolicy implementation
 func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, error) {
-	var res dataflow.Policy
+	var res dataflow.CreatePolicyResponse
 	url := strings.Join([]string{
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID)}, "/")
@@ -61,5 +61,5 @@ func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, erro
 		return nil, err
 	}
 
-	return &res, nil
+	return res.Policy, nil
 }
