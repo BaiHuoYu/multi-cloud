@@ -56,11 +56,18 @@ var policyShowCommand = &cobra.Command{
 	Run:   policyShowAction,
 }
 
+var policyListCommand = &cobra.Command{
+	Use:   "list <id>",
+	Short: "list all policies",
+	Run:   policyListAction,
+}
+
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
+	policyCommand.AddCommand(policyListCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
@@ -118,4 +125,15 @@ func policyShowAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
 	PrintDict(resp, keys, FormatterList{})
+}
+
+func policyListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+
+	resp, err := client.ListPolicy()
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
+	PrintList(resp, keys, FormatterList{})
 }
