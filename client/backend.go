@@ -104,3 +104,17 @@ func (b *BackendMgr) UpdateBackend(body *backend.UpdateBackendRequest) (*backend
 
 	return &res, nil
 }
+
+// ListTypes List all supported storage backend type
+func (b *BackendMgr) ListTypes() (*backend.ListTypeResponse, error) {
+	var res backend.ListTypeResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateTypeURL(b.TenantID)}, "/")
+
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, "", ""); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}

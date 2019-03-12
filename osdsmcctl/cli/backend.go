@@ -67,6 +67,18 @@ var backendUpdateCommand = &cobra.Command{
 	Run:   backendUpdateAction,
 }
 
+var typeCommand = &cobra.Command{
+	Use:   "type",
+	Short: "manage types in the multi-cloud",
+	Run:   backendAction,
+}
+
+var typeListCommand = &cobra.Command{
+	Use:   "list",
+	Short: "list all supported storage backend type",
+	Run:   typeListAction,
+}
+
 func init() {
 	backendCommand.AddCommand(backendCreateCommand)
 	backendCommand.AddCommand(backendDeleteCommand)
@@ -76,6 +88,8 @@ func init() {
 	backendCommand.AddCommand(backendUpdateCommand)
 	backendUpdateCommand.Flags().StringVarP(&access, "access", "a", "", "the access of updated backend")
 	backendUpdateCommand.Flags().StringVarP(&security, "security", "s", "", "the security of updated backend")
+
+	typeCommand.AddCommand(typeListCommand)
 }
 
 func backendAction(cmd *cobra.Command, args []string) {
@@ -149,4 +163,14 @@ func backendUpdateAction(cmd *cobra.Command, args []string) {
 	keys := KeyList{"Id", "TenantId", "UserId", "Name", "Type", "Region",
 		"Endpoint", "BucketName", "Access", "Security"}
 	PrintDict(resp, keys, FormatterList{})
+}
+
+func typeListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+	resp, err := client.ListTypes()
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Name", "Description"}
+	PrintList(resp.Types, keys, FormatterList{})
 }
