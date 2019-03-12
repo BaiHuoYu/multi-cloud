@@ -99,7 +99,7 @@ func (b *BackendMgr) UpdatePolicy(id, body string) (*dataflow.Policy, error) {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, true, ""); err != nil {
+	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, false, ""); err != nil {
 		return nil, err
 	}
 
