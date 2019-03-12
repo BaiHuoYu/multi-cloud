@@ -155,44 +155,44 @@ func request(url string, method string, headers HeaderOption,
 		return nil
 	}
 
-	var respContentType string
-	respContentTypes, ok := resp.Header["Content-Type"]
-	log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
+	if "" == outFileName {
+		var respContentType string
+		respContentTypes, ok := resp.Header["Content-Type"]
+		log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
 
-	if ok && len(respContentTypes) > 0 {
-		respContentType = respContentTypes[0]
-	}
-
-	switch respContentType {
-	case constants.HeaderValueJson:
-		if err = json.Unmarshal(rbody, respBody); err != nil {
-			return fmt.Errorf("failed to unmarshal result message: %v", err)
+		if ok && len(respContentTypes) > 0 {
+			respContentType = respContentTypes[0]
 		}
-		log.Printf("application/json, respBody=%+v\n", respBody)
-		break
-	case constants.HeaderValueXml:
-		if err = xml.Unmarshal(rbody, respBody); err != nil {
-			return fmt.Errorf("failed to unmarshal result message: %v", err)
-		}
-		log.Printf("application/xml, respBody=%+v\n", respBody)
-		break
-	default:
-		if "" != outFileName {
-			path := fmt.Sprintf("./%s", outFileName)
-			file, err := os.Create(path)
-			if err != nil {
-				log.Printf("Failed to create file:%+v\n", err)
-			}
-			defer file.Close()
 
-			n, err := file.Write(rbody)
-			if err != nil {
-				log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
+		switch respContentType {
+		case constants.HeaderValueJson:
+			if err = json.Unmarshal(rbody, respBody); err != nil {
+				return fmt.Errorf("failed to unmarshal result message: %v", err)
 			}
-			log.Printf("Save file successfully, n:%+v\n", n)
-		} else {
+			log.Printf("application/json, respBody=%+v\n", respBody)
+			break
+		case constants.HeaderValueXml:
+			if err = xml.Unmarshal(rbody, respBody); err != nil {
+				return fmt.Errorf("failed to unmarshal result message: %v", err)
+			}
+			log.Printf("application/xml, respBody=%+v\n", respBody)
+			break
+		default:
 			log.Printf("Failure to process the response body!")
 		}
+	} else {
+		path := fmt.Sprintf("./%s", outFileName)
+		file, err := os.Create(path)
+		if err != nil {
+			log.Printf("Failed to create file:%+v\n", err)
+		}
+		defer file.Close()
+
+		n, err := file.Write(rbody)
+		if err != nil {
+			log.Printf("Failed to Write file,err:%+v\n, n:%+v\n", err, n)
+		}
+		log.Printf("Save file successfully, n:%+v\n", n)
 	}
 
 	return nil
