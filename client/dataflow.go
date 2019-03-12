@@ -55,7 +55,7 @@ func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, erro
 	var res dataflow.Policy
 	url := strings.Join([]string{
 		b.Endpoint,
-		GeneratePlanURL(b.TenantID)}, "/")
+		GeneratePolicyURL(b.TenantID)}, "/")
 
 	if err := b.Recv(url, "POST", JsonHeaders, body, &res, "", ""); err != nil {
 		return nil, err
