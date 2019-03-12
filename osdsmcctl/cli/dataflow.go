@@ -51,7 +51,7 @@ var policyCreateCommand = &cobra.Command{
 }
 
 var policyShowCommand = &cobra.Command{
-	Use:   "create <policy info>",
+	Use:   "show <policy info>",
 	Short: "get a policy",
 	Run:   policyShowAction,
 }
@@ -111,7 +111,7 @@ func policyCreateAction(cmd *cobra.Command, args []string) {
 
 func policyShowAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 0)
-	
+
 	resp, err := client.ShowPolicy()
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
