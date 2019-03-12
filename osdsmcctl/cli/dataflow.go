@@ -50,10 +50,17 @@ var policyCreateCommand = &cobra.Command{
 	Run:   policyCreateAction,
 }
 
+var policyShowCommand = &cobra.Command{
+	Use:   "create <policy info>",
+	Short: "get a policy",
+	Run:   policyShowAction,
+}
+
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
+	policyCommand.AddCommand(policyShowCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
@@ -95,6 +102,17 @@ func policyCreateAction(cmd *cobra.Command, args []string) {
 	}
 
 	resp, err := client.CreatePolicy(policy)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
+	PrintDict(resp, keys, FormatterList{})
+}
+
+func policyShowAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+	
+	resp, err := client.ShowPolicy()
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
