@@ -82,7 +82,7 @@ func (b *BucketMgr) CreateBucket(name string, body *S3model.CreateBucketConfigur
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, body, &res, "", ""); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, body, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +96,7 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, "", ""); err != nil {
+	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -110,7 +110,7 @@ func (b *BucketMgr) ListBuckets() ([]S3model.Bucket, error) {
 		GenerateS3URL(b.TenantID)}, "/")
 
 	res := S3model.ListAllMyBucketsResult{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -124,7 +124,7 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 		GenerateS3URL(b.TenantID), BucketName}, "/")
 
 	res := s3.ListObjectResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, "", ""); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -146,7 +146,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 	}
 
 	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
-	if err := b.Recv(url, "PUT", XmlHeaders, buf, &res, ObjectKey, Object); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, buf, &res, false, Object); err != nil {
 		return &res, err
 	}
 
@@ -159,7 +159,7 @@ func (b *BucketMgr) DownloadObject(BucketName string, ObjectKey string) error {
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
-	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, ObjectKey, ""); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, true, ""); err != nil {
 		return err
 	}
 
@@ -173,7 +173,7 @@ func (b *BucketMgr) DeleteObject(BucketName string, ObjectKey string) (*CBaseRes
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, "", ""); err != nil {
+	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, true, ""); err != nil {
 		return &res, err
 	}
 

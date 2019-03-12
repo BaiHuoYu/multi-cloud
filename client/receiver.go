@@ -73,7 +73,7 @@ type HeaderOption map[string]string
 // Receiver implementation
 type Receiver interface {
 	Recv(url string, method string, headers HeaderOption,
-		reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error
+		reqBody interface{}, respBody interface{}, needMarshal bool, outFileName string) error
 }
 
 // NewReceiver implementation
@@ -83,9 +83,10 @@ func NewReceiver() Receiver {
 
 // request implementation
 func request(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
-	log.Printf("\nurl=%+v\nmethod=%+v\nheaders=%+v\nreqBody=%+v\nrespBody=%+v\nObjectKey=%+v\nObject=%+v\n",
-		url, method, headers, reqBody, respBody, ObjectKey, Object)
+	reqBody interface{}, respBody interface{}, needMarshal bool, outFileName string) error {
+	log.Printf("\nurl=%+v\nmethod=%+v\nheaders=%+v\nreqBody=%+v\nrespBody=%+v\nneedMarshal=%+v\noutFileName=%+v\n",
+		url, method, headers, reqBody, respBody, needMarshal, outFileName)
+	var err error
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	req.SetTimeout(time.Minute*6, time.Minute*6)
 	contentType, ok := headers[obs.HEADER_CONTENT_TYPE]
@@ -95,29 +96,29 @@ func request(url string, method string, headers HeaderOption,
 
 	if reqBody != nil {
 		var body []byte
-		var err error
 
-		switch contentType {
-		case constants.HeaderValueJson:
-			body, err = json.MarshalIndent(reqBody, "", "  ")
-			if err != nil {
-				return err
-			}
-			break
-		case constants.HeaderValueXml:
-			if "" == ObjectKey {
+		if needMarshal {
+			switch contentType {
+			case constants.HeaderValueJson:
+				body, err = json.MarshalIndent(reqBody, "", "  ")
+				if err != nil {
+					return err
+				}
+				break
+			case constants.HeaderValueXml:
 				body, err = xml.Marshal(reqBody)
 				if err != nil {
 					return err
 				}
+
+				break
+			default:
+				log.Printf("Content-Type is not application/json nor application/xml\n")
 			}
-			break
-		default:
-			log.Printf("Content-Type is not application/json nor application/xml\n")
 		}
 
 		log.Printf("Request body:\n%s\n", string(body))
-		if "" == ObjectKey {
+		if needMarshal {
 			req.Body(body)
 		} else {
 			req.Body(reqBody)
@@ -176,8 +177,8 @@ func request(url string, method string, headers HeaderOption,
 		log.Printf("application/xml, respBody=%+v\n", respBody)
 		break
 	default:
-		if "" != ObjectKey {
-			path := fmt.Sprintf("./%s", ObjectKey)
+		if "" != outFileName {
+			path := fmt.Sprintf("./%s", outFileName)
 			file, err := os.Create(path)
 			if err != nil {
 				log.Printf("Failed to create file:%+v\n", err)
@@ -200,8 +201,8 @@ func request(url string, method string, headers HeaderOption,
 type receiver struct{}
 
 func (*receiver) Recv(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
-	return request(url, method, headers, reqBody, respBody, ObjectKey, Object)
+	reqBody interface{}, respBody interface{}, needMarshal bool, outFileName string) error {
+	return request(url, method, headers, reqBody, respBody, needMarshal, outFileName)
 }
 
 // NewKeystoneReciver implementation
@@ -256,7 +257,7 @@ func (k *KeystoneReciver) GetToken() error {
 
 // Recv implementation
 func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
-	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
+	reqBody interface{}, respBody interface{}, needMarshal bool, outFileName string) error {
 	desc := fmt.Sprintf("%s %s", method, url)
 	return utils.Retry(2, desc, true, func(retryIdx int, lastErr error) error {
 		if retryIdx > 0 {
@@ -271,7 +272,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		headers[obs.HEADER_CONTENT_TYPE] = constants.HeaderValueJson
 
-		return request(url, method, headers, reqBody, respBody, ObjectKey, Object)
+		return request(url, method, headers, reqBody, respBody, needMarshal, outFileName)
 	})
 }
 
