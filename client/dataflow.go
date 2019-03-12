@@ -91,3 +91,17 @@ func (b *BackendMgr) ListPolicy() ([]*dataflow.Policy, error) {
 
 	return res.Policies, nil
 }
+
+// UpdatePolicy implementation
+func (b *BackendMgr) UpdatePolicy(id, body string) (*dataflow.Policy, error) {
+	var res dataflow.UpdatePolicyResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GeneratePolicyURL(b.TenantID), id}, "/")
+
+	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, "", ""); err != nil {
+		return nil, err
+	}
+
+	return res.Policy, nil
+}

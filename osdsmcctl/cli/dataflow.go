@@ -62,12 +62,25 @@ var policyListCommand = &cobra.Command{
 	Run:   policyListAction,
 }
 
+var policyUpdateCommand = &cobra.Command{
+	Use:   "update <id>",
+	Short: "update a policy",
+	Run:   policyUpdateAction,
+}
+
+var (
+	body string
+)
+
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
 	policyCommand.AddCommand(policyListCommand)
+	policyCommand.AddCommand(policyUpdateCommand)
+
+	policyUpdateCommand.Flags().StringVarP(&body, "body", "b", "", "the body of updated policy")
 }
 
 func planAction(cmd *cobra.Command, args []string) {
@@ -136,4 +149,15 @@ func policyListAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
 	PrintList(resp, keys, FormatterList{})
+}
+
+func policyUpdateAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.UpdatePolicy(args[0], body)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
+	PrintDict(resp, keys, FormatterList{})
 }
