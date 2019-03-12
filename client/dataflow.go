@@ -38,7 +38,7 @@ type DataflowMgr struct {
 
 // CreatePlan implementation
 func (b *BackendMgr) CreatePlan(body *dataflow.Plan) (*dataflow.Plan, error) {
-	res := dataflow.Plan{}
+	var res dataflow.Plan
 	url := strings.Join([]string{
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID)}, "/")
@@ -52,7 +52,7 @@ func (b *BackendMgr) CreatePlan(body *dataflow.Plan) (*dataflow.Plan, error) {
 
 // CreatePolicy implementation
 func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, error) {
-	res := dataflow.Policy{}
+	var res dataflow.Policy
 	url := strings.Join([]string{
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID)}, "/")

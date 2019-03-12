@@ -84,7 +84,8 @@ func NewReceiver() Receiver {
 // request implementation
 func request(url string, method string, headers HeaderOption,
 	reqBody interface{}, respBody interface{}, ObjectKey string, Object string) error {
-	log.Printf("url=%+v\n, method=%+v\n, headers=%+v\n, reqBody=%+v\n, respBody=%+v\n, ObjectKey=%+v\n,  Object=%+v\n")
+	log.Printf("url=%+v\n, method=%+v\n, headers=%+v\n, reqBody=%+v\n, respBody=%+v\n, ObjectKey=%+v\n, Object=%+v\n",
+		url, method, headers, reqBody, respBody, ObjectKey, Object)
 	req := httplib.NewBeegoRequest(url, strings.ToUpper(method))
 	req.SetTimeout(time.Minute*6, time.Minute*6)
 	contentType, ok := headers[obs.HEADER_CONTENT_TYPE]
