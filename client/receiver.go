@@ -156,6 +156,10 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	if "" == outFileName {
+		if nil == respBody {
+			return nil
+		}
+
 		var respContentType string
 		respContentTypes, ok := resp.Header["Content-Type"]
 		log.Printf("ok=%+v, respContentTypes=%+v, len=%v\n", ok, respContentTypes, len(respContentTypes))
