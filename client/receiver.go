@@ -175,7 +175,7 @@ func request(url string, method string, headers HeaderOption,
 			}
 			log.Printf("application/json, respBody=%+v\n", respBody)
 			break
-		case constants.HeaderValueXml:
+		case constants.HeaderValueXml, "text/xml; charset=utf-8":
 			if err = xml.Unmarshal(rbody, respBody); err != nil {
 				return fmt.Errorf("failed to unmarshal result message: %v", err)
 			}
