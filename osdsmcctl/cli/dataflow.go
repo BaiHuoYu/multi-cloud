@@ -172,7 +172,7 @@ func policyUpdateAction(cmd *cobra.Command, args []string) {
 func policyDeleteAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
-	resp, err := client.DeletePolicy(args[0])
+	err := client.DeletePolicy(args[0])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}	

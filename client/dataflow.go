@@ -107,14 +107,14 @@ func (b *BackendMgr) UpdatePolicy(id, body string) (*dataflow.Policy, error) {
 }
 
 // DeletePolicy implementation
-func (b *BackendMgr) DeletePolicy(id string) (*dataflow.Policy, error) {
+func (b *BackendMgr) DeletePolicy(id string) error {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
 	if err := b.Recv(url, "DELETE", JsonHeaders, nil, nil, false, ""); err != nil {
-		return nil, err
+		return err
 	}
 
-	return nil, nil
+	return nil
 }
