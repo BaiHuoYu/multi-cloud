@@ -146,7 +146,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 	}
 
 	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
-	if err := b.Recv(url, "PUT", XmlHeaders, buf, &res, false, Object); err != nil {
+	if err := b.Recv(url, "PUT", XmlHeaders, buf, &res, false, ""); err != nil {
 		return &res, err
 	}
 
@@ -159,7 +159,7 @@ func (b *BucketMgr) DownloadObject(BucketName string, ObjectKey string) error {
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
-	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, true, ""); err != nil {
+	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, true, ObjectKey); err != nil {
 		return err
 	}
 

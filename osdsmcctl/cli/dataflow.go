@@ -68,6 +68,12 @@ var policyUpdateCommand = &cobra.Command{
 	Run:   policyUpdateAction,
 }
 
+var policyDeleteCommand = &cobra.Command{
+	Use:   "delete  <id>",
+	Short: "delete a policy",
+	Run:   policyDeleteAction,
+}
+
 var (
 	body string
 )
@@ -79,8 +85,8 @@ func init() {
 	policyCommand.AddCommand(policyShowCommand)
 	policyCommand.AddCommand(policyListCommand)
 	policyCommand.AddCommand(policyUpdateCommand)
-
 	policyUpdateCommand.Flags().StringVarP(&body, "body", "b", "", "the body of updated policy")
+	policyCommand.AddCommand(policyDeleteCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
@@ -160,4 +166,14 @@ func policyUpdateAction(cmd *cobra.Command, args []string) {
 	}
 	keys := KeyList{"Id", "Name", "Tenant", "Description", "Schedule"}
 	PrintDict(resp, keys, FormatterList{})
+}
+
+
+func policyDeleteAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.DeletePolicy(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}	
 }
