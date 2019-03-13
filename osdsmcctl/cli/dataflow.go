@@ -207,10 +207,13 @@ func planDeleteAction(cmd *cobra.Command, args []string) {
 func planRunAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
-	err := client.RunPlan(args[0])
+	resp, err := client.RunPlan(args[0])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
+	
+	keys := KeyList{"JobId"}
+	PrintDict(resp, keys, FormatterList{})	
 }
 
 //-------------------------------------------------------------------
