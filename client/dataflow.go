@@ -64,6 +64,20 @@ func (b *BackendMgr) ListPlan() ([]*dataflow.Plan, error) {
 	return res.Plans, nil
 }
 
+// ShowPlan implementation
+func (b *BackendMgr) ShowPlan(id string) (*dataflow.Plan, error) {
+	var res dataflow.GetPlanResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GeneratePlanURL(b.TenantID), id}, "/")
+
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, false, ""); err != nil {
+		return nil, err
+	}
+
+	return res.Plan, nil
+}
+
 // CreatePolicy implementation
 func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, error) {
 	var res dataflow.CreatePolicyResponse

@@ -44,6 +44,12 @@ var planListCommand = &cobra.Command{
 	Run:   planListAction,
 }
 
+var planShowCommand = &cobra.Command{
+	Use:   "show <id>",
+	Short: "get a plan",
+	Run:   planShowAction,
+}
+
 //----------------------------------------------
 var policyCommand = &cobra.Command{
 	Use:   "policy",
@@ -88,6 +94,7 @@ var (
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 	planCommand.AddCommand(planListCommand)
+	planCommand.AddCommand(planShowCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
@@ -139,7 +146,18 @@ func planListAction(cmd *cobra.Command, args []string) {
 	PrintList(resp, keys, FormatterList{})
 }
 
+func planShowAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
 
+	resp, err := client.ShowPlan(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Description", "Type", "PolicyId", "PolicyName",
+		"SourceConn", "DestConn", "Filter", "RemainSource", "TenantId", "UserId",
+		"PolicyEnabled"}
+	PrintDict(resp, keys, FormatterList{})
+}
 
 //-------------------------------------------------------------------
 func policyCreateAction(cmd *cobra.Command, args []string) {
@@ -192,12 +210,11 @@ func policyUpdateAction(cmd *cobra.Command, args []string) {
 	PrintDict(resp, keys, FormatterList{})
 }
 
-
 func policyDeleteAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
 	err := client.DeletePolicy(args[0])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
-	}	
+	}
 }
