@@ -38,6 +38,13 @@ var planCreateCommand = &cobra.Command{
 	Run:   planCreateAction,
 }
 
+var planListCommand = &cobra.Command{
+	Use:   "list <plan info>",
+	Short: "list all plans",
+	Run:   planListAction,
+}
+
+//----------------------------------------------
 var policyCommand = &cobra.Command{
 	Use:   "policy",
 	Short: "manage policies in the multi-cloud",
@@ -118,6 +125,22 @@ func planCreateAction(cmd *cobra.Command, args []string) {
 	PrintDict(resp, keys, FormatterList{})
 }
 
+func planListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+
+	resp, err := client.ListPlan()
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Description", "Type", "PolicyId", "PolicyName",
+		"SourceConn", "DestConn", "Filter", "RemainSource", "TenantId", "UserId",
+		"PolicyEnabled"}
+	PrintList(resp, keys, FormatterList{})
+}
+
+
+
+//-------------------------------------------------------------------
 func policyCreateAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 	policy := &dataflow.Policy{}
