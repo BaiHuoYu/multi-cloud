@@ -87,6 +87,7 @@ var (
 
 func init() {
 	planCommand.AddCommand(planCreateCommand)
+	planCommand.AddCommand(planListCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
