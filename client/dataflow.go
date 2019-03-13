@@ -109,7 +109,7 @@ func (b *BackendMgr) DeletePlan(id string) error {
 func (b *BackendMgr) RunPlan(id string) error {
 	url := strings.Join([]string{
 		b.Endpoint,
-		GeneratePlanURL(b.TenantID), id}, "/")
+		GeneratePlanURL(b.TenantID), id, "run"}, "/")
 
 	if err := b.Recv(url, "POST", JsonHeaders, nil, nil, false, ""); err != nil {
 		return err
