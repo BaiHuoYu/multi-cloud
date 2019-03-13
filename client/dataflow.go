@@ -105,6 +105,19 @@ func (b *BackendMgr) DeletePlan(id string) error {
 	return nil
 }
 
+// RunPlan implementation
+func (b *BackendMgr) RunPlan(id string) error {
+	url := strings.Join([]string{
+		b.Endpoint,
+		GeneratePlanURL(b.TenantID), id}, "/")
+
+	if err := b.Recv(url, "POST", JsonHeaders, nil, nil, false, ""); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // CreatePolicy implementation
 func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, error) {
 	var res dataflow.CreatePolicyResponse

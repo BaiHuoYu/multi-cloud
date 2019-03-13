@@ -62,6 +62,12 @@ var planDeleteCommand = &cobra.Command{
 	Run:   planDeleteAction,
 }
 
+var planRunCommand = &cobra.Command{
+	Use:   "run  <id>",
+	Short: "run a plan",
+	Run:   planRunAction,
+}
+
 //----------------------------------------------
 var policyCommand = &cobra.Command{
 	Use:   "policy",
@@ -111,6 +117,7 @@ func init() {
 	planCommand.AddCommand(planUpdateCommand)
 	planUpdateCommand.Flags().StringVarP(&planUpdateBody, "body", "b", "", "the body of updated plan")
 	planCommand.AddCommand(planDeleteCommand)
+	planCommand.AddCommand(planRunCommand)
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
@@ -192,6 +199,15 @@ func planDeleteAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
 	err := client.DeletePlan(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+}
+
+func planRunAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	err := client.RunPlan(args[0])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
