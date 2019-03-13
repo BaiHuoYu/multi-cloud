@@ -78,6 +78,20 @@ func (b *BackendMgr) ShowPlan(id string) (*dataflow.Plan, error) {
 	return res.Plan, nil
 }
 
+// UpdatePlan implementation
+func (b *BackendMgr) UpdatePlan(id, body string) (*dataflow.Plan, error) {
+	var res dataflow.UpdatePlanResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GeneratePolicyURL(b.TenantID), id}, "/")
+
+	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, false, ""); err != nil {
+		return nil, err
+	}
+
+	return res.Plan, nil
+}
+
 // CreatePolicy implementation
 func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, error) {
 	var res dataflow.CreatePolicyResponse

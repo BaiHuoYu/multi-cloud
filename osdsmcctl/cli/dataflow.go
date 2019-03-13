@@ -50,6 +50,12 @@ var planShowCommand = &cobra.Command{
 	Run:   planShowAction,
 }
 
+var planUpdateCommand = &cobra.Command{
+	Use:   "update <id>",
+	Short: "update a plan",
+	Run:   planUpdateAction,
+}
+
 //----------------------------------------------
 var policyCommand = &cobra.Command{
 	Use:   "policy",
@@ -88,19 +94,22 @@ var policyDeleteCommand = &cobra.Command{
 }
 
 var (
-	body string
+	policyUpdateBody string
+	planUpdateBody   string
 )
 
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 	planCommand.AddCommand(planListCommand)
 	planCommand.AddCommand(planShowCommand)
+	planCommand.AddCommand(planUpdateCommand)
+	planUpdateCommand.Flags().StringVarP(&planUpdateBody, "body", "b", "", "the body of updated plan")
 
 	policyCommand.AddCommand(policyCreateCommand)
 	policyCommand.AddCommand(policyShowCommand)
 	policyCommand.AddCommand(policyListCommand)
 	policyCommand.AddCommand(policyUpdateCommand)
-	policyUpdateCommand.Flags().StringVarP(&body, "body", "b", "", "the body of updated policy")
+	policyUpdateCommand.Flags().StringVarP(&policyUpdateBody, "body", "b", "", "the body of updated policy")
 	policyCommand.AddCommand(policyDeleteCommand)
 }
 
@@ -159,6 +168,19 @@ func planShowAction(cmd *cobra.Command, args []string) {
 	PrintDict(resp, keys, FormatterList{})
 }
 
+func planUpdateAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.UpdatePlan(args[0], planUpdateBody)
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+	keys := KeyList{"Id", "Name", "Description", "Type", "PolicyId", "PolicyName",
+		"SourceConn", "DestConn", "Filter", "RemainSource", "TenantId", "UserId",
+		"PolicyEnabled"}
+	PrintDict(resp, keys, FormatterList{})
+}
+
 //-------------------------------------------------------------------
 func policyCreateAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
@@ -202,7 +224,7 @@ func policyListAction(cmd *cobra.Command, args []string) {
 func policyUpdateAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 1)
 
-	resp, err := client.UpdatePolicy(args[0], body)
+	resp, err := client.UpdatePolicy(args[0], policyUpdateBody)
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
