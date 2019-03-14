@@ -19,7 +19,6 @@ This module implements a entry into the OpenSDS service.
 package cli
 
 import (
-	"fmt"
 	"os"
 
 	c "github.com/opensds/multi-cloud/client"
@@ -199,7 +198,7 @@ func objectUploadAction(cmd *cobra.Command, args []string) {
 		Fatalln(HTTPErrStrip(err))
 	}
 
-	fmt.Print(resp)
+	PrintS3BaseResp(resp)
 }
 
 func objectDownloadAction(cmd *cobra.Command, args []string) {
