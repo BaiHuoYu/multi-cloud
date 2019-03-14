@@ -88,7 +88,7 @@ var policyShowCommand = &cobra.Command{
 }
 
 var policyListCommand = &cobra.Command{
-	Use:   "list <id>",
+	Use:   "list",
 	Short: "list all policies",
 	Run:   policyListAction,
 }
@@ -109,6 +109,19 @@ var (
 	policyUpdateBody string
 	planUpdateBody   string
 )
+
+//------------------------------------
+var jobCommand = &cobra.Command{
+	Use:   "job",
+	Short: "manage jobs in the multi-cloud",
+	Run:   jobAction,
+}
+
+var jobListCommand = &cobra.Command{
+	Use:   "list",
+	Short: "list all jobs",
+	Run:   jobListAction,
+}
 
 func init() {
 	planCommand.AddCommand(planCreateCommand)
@@ -133,6 +146,11 @@ func planAction(cmd *cobra.Command, args []string) {
 }
 
 func policyAction(cmd *cobra.Command, args []string) {
+	cmd.Usage()
+	os.Exit(1)
+}
+
+func jobAction(cmd *cobra.Command, args []string) {
 	cmd.Usage()
 	os.Exit(1)
 }
@@ -211,9 +229,9 @@ func planRunAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	
+
 	keys := KeyList{"JobId"}
-	PrintDict(resp, keys, FormatterList{})	
+	PrintDict(resp, keys, FormatterList{})
 }
 
 //-------------------------------------------------------------------
@@ -274,4 +292,18 @@ func policyDeleteAction(cmd *cobra.Command, args []string) {
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
+}
+
+func jobListAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 0)
+
+	resp, err := client.ListJob()
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	keys := KeyList{"Id", "Type", "PlanName", "PlanId", "Description", "SourceLocation",
+		"DestLocation", "Status", "CreateTime", "StartTime", "EndTime", "RemainSource",
+		"TotalCapacity", "PassedCapacity", "TotalCount", "PassedCount", "Progress"}
+	PrintList(resp, keys, FormatterList{})
 }

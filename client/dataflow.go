@@ -187,3 +187,17 @@ func (b *BackendMgr) DeletePolicy(id string) error {
 
 	return nil
 }
+
+// ListJob implementation
+func (b *BackendMgr) ListJob() ([]*dataflow.Job, error) {
+	var res dataflow.ListJobResponse
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateJobURL(b.TenantID)}, "/")
+
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+		return nil, err
+	}
+
+	return res.Jobs, nil
+}
