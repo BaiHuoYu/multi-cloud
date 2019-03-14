@@ -138,6 +138,8 @@ func init() {
 	policyCommand.AddCommand(policyUpdateCommand)
 	policyUpdateCommand.Flags().StringVarP(&policyUpdateBody, "body", "b", "", "the body of updated policy")
 	policyCommand.AddCommand(policyDeleteCommand)
+	
+	jobCommand.AddCommand(jobListCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
