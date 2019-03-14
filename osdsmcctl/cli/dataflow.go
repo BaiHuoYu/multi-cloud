@@ -47,7 +47,7 @@ var planListCommand = &cobra.Command{
 
 var planShowCommand = &cobra.Command{
 	Use:   "show <id>",
-	Short: "get a plan",
+	Short: "show a plan",
 	Run:   planShowAction,
 }
 
@@ -84,7 +84,7 @@ var policyCreateCommand = &cobra.Command{
 
 var policyShowCommand = &cobra.Command{
 	Use:   "show <id>",
-	Short: "get a policy",
+	Short: "show a policy",
 	Run:   policyShowAction,
 }
 
@@ -126,7 +126,7 @@ var jobListCommand = &cobra.Command{
 
 var jobShowCommand = &cobra.Command{
 	Use:   "show",
-	Short: "get a job",
+	Short: "show a job",
 	Run:   jobShowAction,
 }
 

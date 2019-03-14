@@ -51,7 +51,7 @@ var backendDeleteCommand = &cobra.Command{
 
 var backendShowCommand = &cobra.Command{
 	Use:   "show <id>",
-	Short: "qurey a backend information",
+	Short: "show a backend",
 	Run:   backendShowAction,
 }
 
@@ -75,7 +75,7 @@ var typeCommand = &cobra.Command{
 
 var typeListCommand = &cobra.Command{
 	Use:   "list",
-	Short: "list all supported storage backend type",
+	Short: "list all types",
 	Run:   typeListAction,
 }
 

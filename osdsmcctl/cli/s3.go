@@ -58,7 +58,7 @@ var bucketDeleteCommand = &cobra.Command{
 
 var bucketListCommand = &cobra.Command{
 	Use:   "list <bucket name>",
-	Short: "list buckets",
+	Short: "list all buckets",
 	Run:   bucketListAction,
 }
 
@@ -70,7 +70,7 @@ var objectCommand = &cobra.Command{
 
 var objectListCommand = &cobra.Command{
 	Use:   "list <bucket name>",
-	Short: "list objects in a bucket",
+	Short: "list all objects in a bucket",
 	Run:   objectListAction,
 }
 
