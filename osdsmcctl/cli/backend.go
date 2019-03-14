@@ -33,7 +33,7 @@ var (
 
 var backendCommand = &cobra.Command{
 	Use:   "backend",
-	Short: "manage backends in the multi-cloud",
+	Short: "manage backends",
 	Run:   backendAction,
 }
 
@@ -69,7 +69,7 @@ var backendUpdateCommand = &cobra.Command{
 
 var typeCommand = &cobra.Command{
 	Use:   "type",
-	Short: "manage types in the multi-cloud",
+	Short: "manage types",
 	Run:   backendAction,
 }
 

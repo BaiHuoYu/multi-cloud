@@ -26,9 +26,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//----------------plan----------------
 var planCommand = &cobra.Command{
 	Use:   "plan",
-	Short: "manage plans in the multi-cloud",
+	Short: "manage plans",
 	Run:   backendAction,
 }
 
@@ -68,10 +69,10 @@ var planRunCommand = &cobra.Command{
 	Run:   planRunAction,
 }
 
-//----------------------------------------------
+//----------------policy----------------
 var policyCommand = &cobra.Command{
 	Use:   "policy",
-	Short: "manage policies in the multi-cloud",
+	Short: "manage policies",
 	Run:   policyAction,
 }
 
@@ -110,10 +111,10 @@ var (
 	planUpdateBody   string
 )
 
-//------------------------------------
+//----------------job----------------
 var jobCommand = &cobra.Command{
 	Use:   "job",
-	Short: "manage jobs in the multi-cloud",
+	Short: "manage jobs",
 	Run:   jobAction,
 }
 
