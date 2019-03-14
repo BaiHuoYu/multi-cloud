@@ -201,3 +201,18 @@ func (b *BackendMgr) ListJob() ([]*dataflow.Job, error) {
 
 	return res.Jobs, nil
 }
+
+// ShowJob implementation
+func (b *BackendMgr) ShowJob(ID string) (*dataflow.Job, error) {
+	var res dataflow.GetJobResponse
+
+	url := strings.Join([]string{
+		b.Endpoint,
+		GenerateJobURL(b.TenantID), ID}, "/")
+
+	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+		return nil, err
+	}
+
+	return res.Job, nil
+}

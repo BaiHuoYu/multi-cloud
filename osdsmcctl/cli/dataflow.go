@@ -123,6 +123,12 @@ var jobListCommand = &cobra.Command{
 	Run:   jobListAction,
 }
 
+var jobShowCommand = &cobra.Command{
+	Use:   "show",
+	Short: "get a job",
+	Run:   jobShowAction,
+}
+
 func init() {
 	planCommand.AddCommand(planCreateCommand)
 	planCommand.AddCommand(planListCommand)
@@ -138,8 +144,9 @@ func init() {
 	policyCommand.AddCommand(policyUpdateCommand)
 	policyUpdateCommand.Flags().StringVarP(&policyUpdateBody, "body", "b", "", "the body of updated policy")
 	policyCommand.AddCommand(policyDeleteCommand)
-	
+
 	jobCommand.AddCommand(jobListCommand)
+	jobCommand.AddCommand(jobShowCommand)
 }
 
 func planAction(cmd *cobra.Command, args []string) {
@@ -308,4 +315,18 @@ func jobListAction(cmd *cobra.Command, args []string) {
 		"DestLocation", "Status", "CreateTime", "StartTime", "EndTime", "RemainSource",
 		"TotalCapacity", "PassedCapacity", "TotalCount", "PassedCount", "Progress"}
 	PrintList(resp, keys, FormatterList{})
+}
+
+func jobShowAction(cmd *cobra.Command, args []string) {
+	ArgsNumCheck(cmd, args, 1)
+
+	resp, err := client.ShowJob(args[0])
+	if err != nil {
+		Fatalln(HTTPErrStrip(err))
+	}
+
+	keys := KeyList{"Id", "Type", "PlanName", "PlanId", "Description", "SourceLocation",
+		"DestLocation", "Status", "CreateTime", "StartTime", "EndTime", "RemainSource",
+		"TotalCapacity", "PassedCapacity", "TotalCount", "PassedCount", "Progress"}
+	PrintDict(resp, keys, FormatterList{})
 }
