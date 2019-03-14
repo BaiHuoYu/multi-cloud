@@ -43,11 +43,7 @@ func (b *BackendMgr) CreateBackend(body *backend.BackendDetail) (*backend.Backen
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "POST", JsonHeaders, body, &res, true, ""); err != nil {
-		return nil, err
-	}
-
-	return &res, nil
+	return &res, b.Recv(url, "POST", JSONHeaders, body, &res, true, "")
 }
 
 // DeleteBackend implementation
@@ -56,11 +52,7 @@ func (b *BackendMgr) DeleteBackend(ID string) error {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, ID)}, "/")
 
-	if err := b.Recv(url, "DELETE", JsonHeaders, nil, nil, true, ""); err != nil {
-		return err
-	}
-
-	return nil
+	return b.Recv(url, "DELETE", JSONHeaders, nil, nil, true, "")
 }
 
 // GetBackend implementation
@@ -70,7 +62,7 @@ func (b *BackendMgr) GetBackend(ID string) (*backend.BackendDetail, error) {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, ID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -84,7 +76,7 @@ func (b *BackendMgr) ListBackends() (*backend.ListBackendResponse, error) {
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -98,7 +90,7 @@ func (b *BackendMgr) UpdateBackend(body *backend.UpdateBackendRequest) (*backend
 		b.Endpoint,
 		GenerateBackendURL(b.TenantID, body.Id)}, "/")
 
-	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, true, ""); err != nil {
+	if err := b.Recv(url, "PUT", JSONHeaders, body, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +104,7 @@ func (b *BackendMgr) ListTypes() (*backend.ListTypeResponse, error) {
 		b.Endpoint,
 		GenerateTypeURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 

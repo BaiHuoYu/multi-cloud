@@ -21,8 +21,10 @@ import (
 )
 
 var (
-	JsonHeaders = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/json"}
-	XmlHeaders  = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml"}
+	// JSONHeaders "content-type": "application/json"
+	JSONHeaders = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/json"}
+	// XMLHeaders "content-type": "application/xml"
+	XMLHeaders = HeaderOption{obs.HEADER_CONTENT_TYPE: "application/xml"}
 )
 
 // GenerateBackendURL implementation

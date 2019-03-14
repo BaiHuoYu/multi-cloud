@@ -32,6 +32,7 @@ var (
 	locationconstraint string
 )
 
+// S3BaseResp struct
 type S3BaseResp struct {
 	HTTPStatusCode string
 	Message        string
@@ -85,13 +86,11 @@ var objectDownloadCommand = &cobra.Command{
 	Run:   objectDownloadAction,
 }
 
-
 var objectDeleteCommand = &cobra.Command{
 	Use:   "delete <bucket name> <object>",
 	Short: "delete object",
 	Run:   objectDeleteAction,
 }
-
 
 func init() {
 	bucketCommand.AddCommand(bucketCreateCommand)
@@ -117,6 +116,7 @@ func objectAction(cmd *cobra.Command, args []string) {
 	os.Exit(1)
 }
 
+// PrintS3BaseResp implementation
 func PrintS3BaseResp(resp *c.CBaseResponse) {
 	if nil == resp {
 		return
@@ -214,10 +214,10 @@ func objectDownloadAction(cmd *cobra.Command, args []string) {
 func objectDeleteAction(cmd *cobra.Command, args []string) {
 	ArgsNumCheck(cmd, args, 2)
 
-	resp,err := client.DeleteObject(args[0], args[1])
+	resp, err := client.DeleteObject(args[0], args[1])
 	if err != nil {
 		Fatalln(HTTPErrStrip(err))
 	}
-	
+
 	PrintS3BaseResp(resp)
 }

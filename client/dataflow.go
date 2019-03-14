@@ -43,7 +43,7 @@ func (b *BackendMgr) CreatePlan(body *dataflow.Plan) (*dataflow.Plan, error) {
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "POST", JsonHeaders, body, &res, true, ""); err != nil {
+	if err := b.Recv(url, "POST", JSONHeaders, body, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -57,7 +57,7 @@ func (b *BackendMgr) ListPlan() ([]*dataflow.Plan, error) {
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, false, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, false, ""); err != nil {
 		return nil, err
 	}
 
@@ -71,7 +71,7 @@ func (b *BackendMgr) ShowPlan(id string) (*dataflow.Plan, error) {
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, false, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, false, ""); err != nil {
 		return nil, err
 	}
 
@@ -85,24 +85,20 @@ func (b *BackendMgr) UpdatePlan(id, body string) (*dataflow.Plan, error) {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, false, ""); err != nil {
+	if err := b.Recv(url, "PUT", JSONHeaders, body, &res, false, ""); err != nil {
 		return nil, err
 	}
 
 	return res.Plan, nil
 }
 
-// ShowPlan implementation
+// DeletePlan implementation
 func (b *BackendMgr) DeletePlan(id string) error {
 	url := strings.Join([]string{
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "DELETE", JsonHeaders, nil, nil, false, ""); err != nil {
-		return err
-	}
-
-	return nil
+	return b.Recv(url, "DELETE", JSONHeaders, nil, nil, false, "")
 }
 
 // RunPlan implementation
@@ -112,7 +108,7 @@ func (b *BackendMgr) RunPlan(id string) (*dataflow.RunPlanResponse, error) {
 		b.Endpoint,
 		GeneratePlanURL(b.TenantID), id, "run"}, "/")
 
-	if err := b.Recv(url, "POST", JsonHeaders, nil, &res, false, ""); err != nil {
+	if err := b.Recv(url, "POST", JSONHeaders, nil, &res, false, ""); err != nil {
 		return &res, err
 	}
 
@@ -126,7 +122,7 @@ func (b *BackendMgr) CreatePolicy(body *dataflow.Policy) (*dataflow.Policy, erro
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "POST", JsonHeaders, body, &res, true, ""); err != nil {
+	if err := b.Recv(url, "POST", JSONHeaders, body, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -140,7 +136,7 @@ func (b *BackendMgr) ShowPolicy(id string) (*dataflow.Policy, error) {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -154,7 +150,7 @@ func (b *BackendMgr) ListPolicy() ([]*dataflow.Policy, error) {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -168,7 +164,7 @@ func (b *BackendMgr) UpdatePolicy(id, body string) (*dataflow.Policy, error) {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "PUT", JsonHeaders, body, &res, false, ""); err != nil {
+	if err := b.Recv(url, "PUT", JSONHeaders, body, &res, false, ""); err != nil {
 		return nil, err
 	}
 
@@ -181,11 +177,7 @@ func (b *BackendMgr) DeletePolicy(id string) error {
 		b.Endpoint,
 		GeneratePolicyURL(b.TenantID), id}, "/")
 
-	if err := b.Recv(url, "DELETE", JsonHeaders, nil, nil, false, ""); err != nil {
-		return err
-	}
-
-	return nil
+	return b.Recv(url, "DELETE", JSONHeaders, nil, nil, false, "")
 }
 
 // ListJob implementation
@@ -195,7 +187,7 @@ func (b *BackendMgr) ListJob() ([]*dataflow.Job, error) {
 		b.Endpoint,
 		GenerateJobURL(b.TenantID)}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -210,7 +202,7 @@ func (b *BackendMgr) ShowJob(ID string) (*dataflow.Job, error) {
 		b.Endpoint,
 		GenerateJobURL(b.TenantID), ID}, "/")
 
-	if err := b.Recv(url, "GET", JsonHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", JSONHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 

@@ -25,37 +25,22 @@ import (
 	"github.com/opensds/multi-cloud/s3/proto"
 )
 
+// CBaseResponse implementation
 type CBaseResponse struct {
-	XMLName               xml.Name               `xml:"BaseResponse,omitempty" json:"BaseResponse,omitempty"`
-	CErrorCode            *CErrorCode            `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
-	CMsg                  *CMsg                  `xml:"Msg,omitempty" json:"Msg,omitempty"`
-	CXXX_NoUnkeyedLiteral *CXXX_NoUnkeyedLiteral `xml:"XXX_NoUnkeyedLiteral,omitempty" json:"XXX_NoUnkeyedLiteral,omitempty"`
-	CXXX_sizecache        *CXXX_sizecache        `xml:"XXX_sizecache,omitempty" json:"XXX_sizecache,omitempty"`
-	CXXX_unrecognized     *CXXX_unrecognized     `xml:"XXX_unrecognized,omitempty" json:"XXX_unrecognized,omitempty"`
+	XMLName    xml.Name    `xml:"BaseResponse,omitempty" json:"BaseResponse,omitempty"`
+	CErrorCode *CErrorCode `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
+	CMsg       *CMsg       `xml:"Msg,omitempty" json:"Msg,omitempty"`
 }
 
+// CErrorCode implementation
 type CErrorCode struct {
 	XMLName xml.Name `xml:"ErrorCode,omitempty" json:"ErrorCode,omitempty"`
 	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
+// CMsg implementation
 type CMsg struct {
 	XMLName xml.Name `xml:"Msg,omitempty" json:"Msg,omitempty"`
-	Value   string   `xml:",chardata" json:",omitempty"`
-}
-
-type CXXX_NoUnkeyedLiteral struct {
-	XMLName xml.Name `xml:"XXX_NoUnkeyedLiteral,omitempty" json:"XXX_NoUnkeyedLiteral,omitempty"`
-	Value   string   `xml:",chardata" json:",omitempty"`
-}
-
-type CXXX_sizecache struct {
-	XMLName xml.Name `xml:"XXX_sizecache,omitempty" json:"XXX_sizecache,omitempty"`
-	Value   string   `xml:",chardata" json:",omitempty"`
-}
-
-type CXXX_unrecognized struct {
-	XMLName xml.Name `xml:"XXX_unrecognized,omitempty" json:"XXX_unrecognized,omitempty"`
 	Value   string   `xml:",chardata" json:",omitempty"`
 }
 
@@ -82,7 +67,7 @@ func (b *BucketMgr) CreateBucket(name string, body *S3model.CreateBucketConfigur
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "PUT", XmlHeaders, body, &res, true, ""); err != nil {
+	if err := b.Recv(url, "PUT", XMLHeaders, body, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -96,7 +81,7 @@ func (b *BucketMgr) DeleteBucket(name string) (*CBaseResponse, error) {
 		GenerateS3URL(b.TenantID), name}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "DELETE", XMLHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -110,7 +95,7 @@ func (b *BucketMgr) ListBuckets() ([]S3model.Bucket, error) {
 		GenerateS3URL(b.TenantID)}, "/")
 
 	res := S3model.ListAllMyBucketsResult{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", XMLHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -124,7 +109,7 @@ func (b *BucketMgr) ListObjects(BucketName string) ([]*s3.Object, error) {
 		GenerateS3URL(b.TenantID), BucketName}, "/")
 
 	res := s3.ListObjectResponse{}
-	if err := b.Recv(url, "GET", XmlHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "GET", XMLHeaders, nil, &res, true, ""); err != nil {
 		return nil, err
 	}
 
@@ -146,7 +131,7 @@ func (b *BucketMgr) UploadObject(BucketName, ObjectKey, Object string) (*CBaseRe
 	}
 
 	log.Printf("len(buf)=%+v!\n", strconv.Itoa(len(buf)))
-	if err := b.Recv(url, "PUT", XmlHeaders, buf, &res, false, ""); err != nil {
+	if err := b.Recv(url, "PUT", XMLHeaders, buf, &res, false, ""); err != nil {
 		return &res, err
 	}
 
@@ -159,11 +144,7 @@ func (b *BucketMgr) DownloadObject(BucketName string, ObjectKey string) error {
 		b.Endpoint,
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
-	if err := b.Recv(url, "GET", XmlHeaders, nil, nil, true, ObjectKey); err != nil {
-		return err
-	}
-
-	return nil
+	return b.Recv(url, "GET", XMLHeaders, nil, nil, true, ObjectKey)
 }
 
 // DeleteObject implementation
@@ -173,7 +154,7 @@ func (b *BucketMgr) DeleteObject(BucketName string, ObjectKey string) (*CBaseRes
 		GenerateS3URL(b.TenantID), BucketName, ObjectKey}, "/")
 
 	res := CBaseResponse{}
-	if err := b.Recv(url, "DELETE", XmlHeaders, nil, &res, true, ""); err != nil {
+	if err := b.Recv(url, "DELETE", XMLHeaders, nil, &res, true, ""); err != nil {
 		return &res, err
 	}
 
