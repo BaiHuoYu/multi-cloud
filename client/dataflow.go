@@ -83,7 +83,7 @@ func (b *BackendMgr) UpdatePlan(id, body string) (*dataflow.Plan, error) {
 	var res dataflow.UpdatePlanResponse
 	url := strings.Join([]string{
 		b.Endpoint,
-		GeneratePolicyURL(b.TenantID), id}, "/")
+		GeneratePlanURL(b.TenantID), id}, "/")
 
 	if err := b.Recv(url, "PUT", JSONHeaders, body, &res, false, ""); err != nil {
 		return nil, err
