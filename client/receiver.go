@@ -234,7 +234,7 @@ func (k *KeystoneReciver) GetToken() error {
 		TenantName:       k.Auth.TenantName,
 		AllowReauth:      k.Auth.AllowReauth,
 	}
-
+	log.Printf("GetToken, opts:%+v\n", opts)
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
 		return fmt.Errorf("When get auth client: %v", err)
@@ -256,6 +256,7 @@ func (k *KeystoneReciver) GetToken() error {
 	}
 	k.Auth.TenantID = project.ID
 	k.Auth.TokenID = token.ID
+	log.Printf("GetToken, k.Auth.TenantID:%+v\nk.Auth.TokenID:%+v\n", k.Auth.TenantID, k.Auth.TokenID)
 	return nil
 }
 
@@ -267,6 +268,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 		if retryIdx > 0 {
 			err, ok := lastErr.(*HTTPError)
 			if ok && err.Code == http.StatusUnauthorized {
+				log.Printf("k.GetToken")
 				k.GetToken()
 			} else {
 				return lastErr
