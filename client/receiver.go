@@ -275,6 +275,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		headers[obs.HEADER_CONTENT_TYPE] = constants.HeaderValueJson
+		log.Printf("KeystoneReciver:%+v\n", k.Auth.TokenID)
 
 		return request(url, method, headers, reqBody, respBody, needMarshal, outFileName)
 	})
