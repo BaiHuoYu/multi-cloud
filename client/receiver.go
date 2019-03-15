@@ -237,21 +237,25 @@ func (k *KeystoneReciver) GetToken() error {
 	log.Printf("GetToken, opts:%+v\n", opts)
 	provider, err := openstack.AuthenticatedClient(opts)
 	if err != nil {
+		log.Printf("When get auth client: %v", err)
 		return fmt.Errorf("When get auth client: %v", err)
 	}
 
 	// Only support keystone v3
 	identity, err := openstack.NewIdentityV3(provider, gophercloud.EndpointOpts{})
 	if err != nil {
+		log.Printf("When get identity session: %v", err)
 		return fmt.Errorf("When get identity session: %v", err)
 	}
 	r := tokens.Create(identity, &opts)
 	token, err := r.ExtractToken()
 	if err != nil {
+		log.Printf("When get extract token session: %v", err)
 		return fmt.Errorf("When get extract token session: %v", err)
 	}
 	project, err := r.ExtractProject()
 	if err != nil {
+		log.Printf("When get extract project session: %v", err)
 		return fmt.Errorf("When get extract project session: %v", err)
 	}
 	k.Auth.TenantID = project.ID
