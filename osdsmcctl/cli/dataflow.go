@@ -357,7 +357,7 @@ func jobListAction(cmd *cobra.Command, args []string) {
 
 	var jobs []CliJobFormat
 	for i, _ := range resp {
-		jobs[i] = ConvertJobToCliFormat(resp[i])
+		jobs =append(jobs,ConvertJobToCliFormat(resp[i]))		
 	}
 
 	keys := KeyList{"Id", "Type", "PlanName", "PlanId", "SourceLocation",
