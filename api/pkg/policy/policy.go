@@ -186,7 +186,9 @@ func (r *Rules) String() string {
 }
 
 func Authorize(req *restful.Request, res *restful.Response, action string) bool {
+	log.Infof("Authorize-------------")
 	if os.Getenv("AUTH_AuthStrategy") != "keystone" {
+		log.Infof("AUTH_AuthStrategy != keystone")
 		return true
 	}
 	ctx := context.GetContext(req)

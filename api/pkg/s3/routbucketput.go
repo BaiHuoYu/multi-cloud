@@ -15,11 +15,13 @@
 package s3
 
 import (
+	log "github.com/golang/glog"
 	"github.com/emicklei/go-restful"
 	"github.com/opensds/multi-cloud/api/pkg/policy"
 )
 
 func (s *APIService) RouteBucketPut(request *restful.Request, response *restful.Response) {
+	log.Infof("RouteBucketPut, request:%+v, response:%+v", request, response)
 	if !policy.Authorize(request, response, "routbucket:put") {
 		return
 	}
@@ -39,6 +41,7 @@ func (s *APIService) RouteBucketPut(request *restful.Request, response *restful.
 		s.BucketLifecyclePut(request, response)
 
 	} else {
+		log.Info("RouteBucketPut, s.BucketPut")
 		s.BucketPut(request, response)
 	}
 }
