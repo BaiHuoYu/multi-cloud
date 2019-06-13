@@ -278,10 +278,11 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 				return lastErr
 			}
 		}
-
+		log.Printf("url: %v", url)
 		if strings.Contains(url, "/s3") {
 			headers[constants.AuthorizationHeader] = "OPENSDS-HMAC-SHA256 Credential=access_key/20190301/us-east-1/s3/sign_request,SignedHeaders=authorization;host;x-auth-date,Signature=472f0a1b7815974847620da53fcdd2fdd53203b5d8d08e7ce81943b260560e26"
 			headers[constants.SignDateHeader] = time.Now().Format("20060102T150405Z")
+			log.Printf("headers: %+v", headers)
 		} else {
 			headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		}
