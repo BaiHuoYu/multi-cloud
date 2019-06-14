@@ -30,6 +30,8 @@ import (
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/credentials"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
+	"github.com/opensds/multi-cloud/api/pkg/filters/signature/credentials/keystonecredentials"
+	"github.com/opensds/multi-cloud/api/pkg/filters/signature/signer"
 	"github.com/opensds/multi-cloud/api/pkg/model"
 	"github.com/opensds/multi-cloud/api/pkg/utils"
 	"github.com/opensds/multi-cloud/api/pkg/utils/constants"
@@ -82,6 +84,50 @@ func NewReceiver() Receiver {
 	return &receiver{}
 }
 
+func CalculateSignature(headers HeaderOption, req *http.Request) string {
+	authorization, ok := headers[constants.AuthorizationHeader]
+	if !ok {
+		log.Printf("no ", constants.AuthorizationHeader)
+		return ""
+	}
+
+	//Get the X-Auth-Date Header from the request
+	requestDateTime, ok := headers[constants.SignDateHeader]
+	if !ok {
+		log.Printf("no ", constants.SignDateHeader)
+		return ""
+	}
+
+	log.Printf("authorization %+v, requestDateTime %+v", authorization, requestDateTime)
+	//Get the Authorization parameters from the Authorization String
+	authorizationParts := strings.Split(authorization, ",")
+	credential, _ := strings.TrimSpace(authorizationParts[0]), strings.TrimSpace(authorizationParts[2])
+	credentialParts := strings.Split(credential, " ")
+	creds := credentialParts[1]
+	credsParts := strings.Split(creds, "=")
+	credentialStr := credsParts[1]
+	credentialStrParts := strings.Split(credentialStr, "/")
+	accessKeyID, requestDate, region, service := credentialStrParts[0], credentialStrParts[1], credentialStrParts[2], credentialStrParts[3]
+	log.Printf("accessKeyID:%+v, requestDate:%+v, region:%+v, service:%+v", accessKeyID, requestDate, region, service)
+	//TODO Get Request Body
+	body := ""
+
+	//Create a keystone credentials Provider client for retrieving credentials
+	credentials := keystonecredentials.NewCredentialsClient(accessKeyID)
+	log.Printf("credentials %+v", credentials)
+	//Create a Signer and the calculate the signature based on the Header parameters passed in request
+	Signer := signer.NewSigner(credentials)
+	calculatedSignature, err := Signer.Sign(req, body, service, region, requestDateTime, requestDate, credentialStr)
+	log.Printf("req:%+v, body:%+v, service:%+v, region:%+v, requestDateTime:%+v, requestDate:%+v, credentialStr:%+v", req, body, service, region, requestDateTime, requestDate, credentialStr)
+	if err != nil {
+		log.Printf("signer.Sign err:%+v", err)
+		return ""
+	}
+
+	log.Printf("calculatedSignature:%+v", calculatedSignature)
+	return calculatedSignature
+}
+
 // request implementation
 func request(url string, method string, headers HeaderOption,
 	reqBody interface{}, respBody interface{}, needMarshal bool, outFileName string) error {
@@ -126,6 +172,8 @@ func request(url string, method string, headers HeaderOption,
 		}
 	}
 
+	calculatedSignature := CalculateSignature(headers, req.GetRequest())
+	log.Printf("calculatedSignature:%v", calculatedSignature)
 	//init header
 	if headers != nil {
 		for k, v := range headers {
