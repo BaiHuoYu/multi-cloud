@@ -118,17 +118,19 @@ func (sign *Signature) Filter(req *restful.Request, resp *restful.Response, chai
 
 	//Create a keystone credentials Provider client for retrieving credentials
 	credentials := keystonecredentials.NewCredentialsClient(accessKeyID)
-
+	log.Infof("credentials %+v", credentials)
 	//Create a Signer and the calculate the signature based on the Header parameters passed in request
 	signer := NewSigner(credentials)
 	calculatedSignature, err := signer.Sign(req.Request, body, service, region, requestDateTime, requestDate, credentialStr)
-
+	log.Infof("req.Request:%+v, body:%+v, service:%+v, region:%+v, requestDateTime:%+v, requestDate:%+v, credentialStr:%+v", req.Request, body, service, region, requestDateTime, requestDate, credentialStr)
 	if err != nil {
+		log.Infof("signer.Sign err:%+v", err)
 		return
 	}
 
 	//Validate the signature
 	if err := sign.validateSignature(req, resp, expectedSignature, calculatedSignature); err != nil {
+		log.Infof("sign.validateSignature err:%+v", err)
 		return
 	}
 

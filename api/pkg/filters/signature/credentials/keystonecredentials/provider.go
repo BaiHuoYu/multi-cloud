@@ -53,14 +53,13 @@ func NewProviderClient(accessKeyID string, options ...func(*KeystoneProvider)) c
 		// If auth set up failed, raise panic.
 		panic(err)
 	}
-
+	log.Infof("NewProviderClient k.SetUp ok")
 	kp := &KeystoneProvider{
 		AccessKeyID: accessKeyID,
 	}
 	kp.Identity = auth.GetIdentity(k)
 
-	log.V(4).Infof("Service Token Info: %s", kp.Identity.TokenID)
-
+	log.Infof("Service Token Info: %s", kp.Identity.TokenID)
 	return kp
 }
 

@@ -45,6 +45,7 @@ func NewKeystone() AuthBase {
 		// If auth set up failed, raise panic.
 		panic(err)
 	}
+	log.Infof("k.SetUp ok")
 	return k
 }
 
