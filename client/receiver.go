@@ -333,9 +333,6 @@ func (k *KeystoneReciver) GetTokenAndCredential() error {
 	k.Auth.TenantID = project.ID
 	k.Auth.TokenID = token.ID
 
-	k.Auth.Accesskey = "access_key"
-	k.Auth.SecretKey = "secret_key"
-
 	allPages, err := credentials.List(identity, nil).AllPages()
 	log.Printf("allPages: %s, err:%v", allPages, err)
 
@@ -346,9 +343,10 @@ func (k *KeystoneReciver) GetTokenAndCredential() error {
 		return err
 	}
 
-	blob := getBlob(Credentials, "access_key")
+	blob := getBlob(Credentials, k.Auth.Accesskey)
 
 	if blob == nil {
+		fmt.Sprintf("{\"access\":\"%s\",\"secret\":\"%s\"}", k.Auth.Accesskey, k.Auth.SecretKey)
 		credentialOpts := credentials.CreateOpts{
 			Blob:      "{\"access\":\"access_key\",\"secret\":\"secret_key\"}",
 			ProjectID: project.ID,

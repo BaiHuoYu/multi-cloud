@@ -43,6 +43,10 @@ const (
 	OsUserDominID = "OS_USER_DOMIN_ID"
 	// OsUserID Api environment variable name in docker-compose.yml
 	OsUserID = "OS_USER_ID"
+	// OsUserID Api environment variable name in docker-compose.yml
+	OsAccesskey = "OS_ACCESS_KEY"
+	// OsUserID Api environment variable name in docker-compose.yml
+	OsSecretKey = "OS_SECRET_KEY"
 )
 
 // AuthOptions Auth Options
@@ -126,6 +130,9 @@ func LoadKeystoneAuthOptions(envs []string) *KeystoneAuthOptions {
 	if opt.TenantName == "" {
 		opt.TenantName = projectName
 	}
+
+	opt.Accesskey = GetValueFromStrArray(envs, OsAccesskey)
+	opt.SecretKey = GetValueFromStrArray(envs, OsSecretKey)
 
 	return opt
 }
