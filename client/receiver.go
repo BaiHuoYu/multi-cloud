@@ -181,6 +181,7 @@ func request(url string, method string, headers HeaderOption,
 	}
 
 	calculatedSignature := CalculateSignature(headers, req.GetRequest())
+	req.Header(constants.AuthorizationHeader, headers[constants.AuthorizationHeader])
 	log.Printf("calculatedSignature:%v", calculatedSignature)
 
 	// Get http response.
