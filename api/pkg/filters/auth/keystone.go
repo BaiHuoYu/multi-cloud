@@ -68,21 +68,26 @@ func (k *Keystone) SetUp() error {
 		log.Error("When get identity session:", err)
 		return err
 	}
-	log.V(4).Infof("Service Token Info: %s", provider.TokenID)
+	log.Infof("Service Token Info: %s", provider.TokenID)
 	return nil
 }
 
 func (k *Keystone) Filter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 	// Strip the spaces around the token  ctx.Input.Header(constants.AuthTokenHeader)
+	log.Infof("Filter, req: %+v, resp:%+v, chain:%+v", req, resp, chain)
 	token := strings.TrimSpace(req.HeaderParameter(constants.AuthTokenHeader))
 	if err := k.validateToken(req, resp, token); err != nil {
+		log.Infof("k.validateToken, err:%+v", err)
 		return
 	}
+
+	log.Infof("k.validateToken ok")
 	chain.ProcessFilter(req, resp)
 }
 
 func (k *Keystone) validateToken(req *restful.Request, res *restful.Response, token string) error {
 	if token == "" {
+		log.Infof("token not found in header")
 		return model.HttpError(res, http.StatusUnauthorized, "token not found in header")
 	}
 	var r tokens.GetResult
@@ -91,8 +96,10 @@ func (k *Keystone) validateToken(req *restful.Request, res *restful.Response, to
 		if retryIdx > 0 {
 			// Fixme: Is there any better method ?
 			if lastErr.Error() == "Authentication failed" {
+				log.Infof("Authentication failed, k.SetUp")
 				k.SetUp()
 			} else {
+				log.Infof("lastErr:%+v", lastErr)
 				return lastErr
 			}
 		}

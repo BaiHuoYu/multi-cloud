@@ -51,6 +51,7 @@ func FilterFactory() restful.FilterFunction {
 	log.Log(os.Getenv("OS_AUTH_AUTHSTRATEGY"))
 	switch os.Getenv("OS_AUTH_AUTHSTRATEGY") {
 	case "keystone":
+		log.Log("filter is keystone")
 		auth = NewKeystone()
 	case "noauth":
 		log.Log("filter is noauth")
