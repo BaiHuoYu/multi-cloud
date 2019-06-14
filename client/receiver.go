@@ -343,12 +343,10 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 			}
 		}
 
-		if "" == k.Auth.TokenID {
-			log.Printf("start GetTokenAndCredential: %v")
-			err := k.GetTokenAndCredential()
-			if err != nil {
-				log.Printf("Failed to get token: %v", err)
-			}
+		log.Printf("start GetTokenAndCredential: %v")
+		err := k.GetTokenAndCredential()
+		if err != nil {
+			log.Printf("Failed to get token: %v", err)
 		}
 
 		log.Printf("Recv----url: %v", url)
