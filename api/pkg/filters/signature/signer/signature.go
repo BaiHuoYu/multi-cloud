@@ -96,7 +96,7 @@ func (sign *Signature) Filter(req *restful.Request, resp *restful.Response, chai
 		log.Error("When get Request DateTimeStamp value:", err)
 		return
 	}
-
+	log.Infof("authorization %+v, requestDateTime %+v", authorization, requestDateTime)
 	//Get the Authorization parameters from the Authorization String
 	authorizationParts := strings.Split(authorization, ",")
 	credential, signature := strings.TrimSpace(authorizationParts[0]), strings.TrimSpace(authorizationParts[2])
@@ -112,7 +112,7 @@ func (sign *Signature) Filter(req *restful.Request, resp *restful.Response, chai
 
 	credentialStrParts := strings.Split(credentialStr, "/")
 	accessKeyID, requestDate, region, service := credentialStrParts[0], credentialStrParts[1], credentialStrParts[2], credentialStrParts[3]
-
+	log.Infof("accessKeyID:%+v, requestDate:%+v, region:%+v, service:%+v", accessKeyID, requestDate, region, service)
 	//TODO Get Request Body
 	body := ""
 

@@ -52,7 +52,7 @@ func NewKeystone() AuthBase {
 func (k *Keystone) SetUp() error {
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: os.Getenv("OS_AUTH_URL"),
-		DomainName:       os.Getenv("OS_USER_DOMIN_ID"),
+		DomainID:         os.Getenv("OS_USER_DOMIN_ID"),
 		Username:         os.Getenv("OS_USERNAME"),
 		Password:         os.Getenv("OS_PASSWORD"),
 		TenantName:       os.Getenv("OS_PROJECT_NAME"),
