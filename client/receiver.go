@@ -278,7 +278,6 @@ func (k *KeystoneReciver) GetTokenAndCredential() error {
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: k.Auth.IdentityEndpoint,
 		Username:         k.Auth.Username,
-		UserID:           k.Auth.UserID,
 		Password:         k.Auth.Password,
 		DomainID:         k.Auth.DomainID,
 		DomainName:       k.Auth.DomainName,
