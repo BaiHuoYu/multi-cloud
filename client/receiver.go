@@ -342,6 +342,15 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 				return lastErr
 			}
 		}
+
+		if "" == k.Auth.TokenID {
+			log.Printf("start GetTokenAndCredential: %v")
+			err := k.GetTokenAndCredential()
+			if err != nil {
+				log.Printf("Failed to get token: %v", err)
+			}
+		}
+
 		log.Printf("Recv----url: %v", url)
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		if strings.Contains(url, "/s3") {
