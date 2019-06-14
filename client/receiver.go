@@ -125,6 +125,7 @@ func CalculateSignature(headers HeaderOption, req *http.Request) string {
 	}
 
 	log.Printf("calculatedSignature:%+v", calculatedSignature)
+	headers[constants.AuthorizationHeader] = headers[constants.AuthorizationHeader] + calculatedSignature
 	return calculatedSignature
 }
 
@@ -390,7 +391,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 		log.Printf("Recv----url: %v", url)
 		headers[constants.AuthTokenHeader] = k.Auth.TokenID
 		if strings.Contains(url, "/s3") {
-			headers[constants.AuthorizationHeader] = "OPENSDS-HMAC-SHA256 Credential=access_key/20190301/us-east-1/s3/sign_request,SignedHeaders=authorization;host;x-auth-date,Signature=472f0a1b7815974847620da53fcdd2fdd53203b5d8d08e7ce81943b260560e26"
+			headers[constants.AuthorizationHeader] = "OPENSDS-HMAC-SHA256 Credential=access_key/20190301/us-east-1/s3/sign_request,SignedHeaders=authorization;host;x-auth-date,Signature="
 			headers[constants.SignDateHeader] = time.Now().Format("20060102T150405Z")
 		}
 		log.Printf("Recv----headers: %v", url)

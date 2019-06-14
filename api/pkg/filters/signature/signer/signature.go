@@ -128,6 +128,7 @@ func (sign *Signature) Filter(req *restful.Request, resp *restful.Response, chai
 		return
 	}
 
+	log.Infof("expectedSignature %+v, calculatedSignature %+v", expectedSignature, calculatedSignature)
 	//Validate the signature
 	if err := sign.validateSignature(req, resp, expectedSignature, calculatedSignature); err != nil {
 		log.Infof("sign.validateSignature err:%+v", err)
