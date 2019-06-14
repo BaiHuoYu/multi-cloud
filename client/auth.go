@@ -41,6 +41,8 @@ const (
 	OsProjectName = "OS_PROJECT_NAME"
 	// OsUserDominID Api environment variable name in docker-compose.yml
 	OsUserDominID = "OS_USER_DOMIN_ID"
+	// OsUserID Api environment variable name in docker-compose.yml
+	OsUserID = "OS_USER_ID"
 )
 
 // AuthOptions Auth Options
@@ -118,6 +120,7 @@ func LoadKeystoneAuthOptions(envs []string) *KeystoneAuthOptions {
 	opt.TenantName = GetValueFromStrArray(envs, OsTenantName)
 	projectName := GetValueFromStrArray(envs, OsProjectName)
 	opt.DomainID = GetValueFromStrArray(envs, OsUserDominID)
+	opt.UserID = GetValueFromStrArray(envs, OsUserID)
 	if opt.TenantName == "" {
 		opt.TenantName = projectName
 	}
