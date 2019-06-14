@@ -93,9 +93,10 @@ type getCredentialsOutput struct {
 func (p *KeystoneProvider) getCredentials(accessKeyID string) (*getCredentialsOutput, error) {
 
 	allPages, err := creds.List(p.Identity, nil).AllPages()
+	log.Infof("allPages: %s, err:%v", allPages, err)
 
 	credentials, err := creds.ExtractCredentials(allPages)
-	log.V(4).Infof("Credentials: %s", credentials)
+	log.Infof("Credentials: %s, err:%v", credentials, err)
 
 	if err != nil {
 		return nil, err

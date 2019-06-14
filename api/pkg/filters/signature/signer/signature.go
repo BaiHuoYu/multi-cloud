@@ -208,10 +208,12 @@ func (signer Signer) Sign(req *http.Request, body string, service, region string
 	sign.credentialString = credentialStr
 
 	if err != nil {
+		log.Infof("signer.Credentials.Get err:%+v", err)
 		return "", err
 	}
 
 	if err := sign.build(); err != nil {
+		log.Infof("sign.build() err:%+v", err)
 		return "", err
 	}
 

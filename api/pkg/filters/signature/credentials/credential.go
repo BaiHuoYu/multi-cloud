@@ -16,6 +16,8 @@ package credentials
 
 import (
 	"sync"
+
+	log "github.com/golang/glog"
 )
 
 // A Value is the OpenSDS multi-cloud credentials value.
@@ -73,6 +75,7 @@ func (c *Credentials) Get() (Value, error) {
 	c.m.RLock()
 	credentials, err := c.provider.Retrieve()
 	if err != nil {
+		log.Infof("Get err:%+v", err)
 		return Value{}, err
 	}
 	c.credentials = credentials
