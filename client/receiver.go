@@ -173,14 +173,15 @@ func request(url string, method string, headers HeaderOption,
 		}
 	}
 
-	calculatedSignature := CalculateSignature(headers, req.GetRequest())
-	log.Printf("calculatedSignature:%v", calculatedSignature)
 	//init header
 	if headers != nil {
 		for k, v := range headers {
 			req.Header(k, v)
 		}
 	}
+
+	calculatedSignature := CalculateSignature(headers, req.GetRequest())
+	log.Printf("calculatedSignature:%v", calculatedSignature)
 
 	// Get http response.
 	resp, err := req.Response()

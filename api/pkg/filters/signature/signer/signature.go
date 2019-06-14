@@ -212,7 +212,7 @@ func (signer Signer) Sign(req *http.Request, body string, service, region string
 		log.Infof("signer.Credentials.Get err:%+v", err)
 		return "", err
 	}
-
+	log.Infof("sign:%+v", sign)
 	if err := sign.build(); err != nil {
 		log.Infof("sign.build() err:%+v", err)
 		return "", err
