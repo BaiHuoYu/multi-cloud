@@ -273,6 +273,28 @@ type KeystoneReciver struct {
 	Auth *KeystoneAuthOptions
 }
 
+type Blob struct {
+	Access string `json:"access"`
+	Secret string `json:"secret"`
+}
+
+func getBlob(credentials []credentials.Credential, accessKeyID string) *Blob {
+	blob := &Blob{}
+	for _, credential := range credentials {
+		var blobStr = credential.Blob
+		b := strings.Replace(blobStr, "\\", "", -1)
+		err := json.Unmarshal([]byte(b), blob)
+
+		if err != nil {
+			return nil
+		}
+		if blob.Access == accessKeyID {
+			return blob
+		}
+	}
+	return nil
+}
+
 // GetToken implementation
 func (k *KeystoneReciver) GetTokenAndCredential() error {
 	opts := gophercloud.AuthOptions{
@@ -308,19 +330,36 @@ func (k *KeystoneReciver) GetTokenAndCredential() error {
 	k.Auth.TenantID = project.ID
 	k.Auth.TokenID = token.ID
 
-	credentialOpts := credentials.CreateOpts{
-		Blob:      "{\"access\":\"181920\",\"secret\":\"secretKey\"}",
-		ProjectID: project.ID,
-		Type:      "ec2",
-		UserID:    k.Auth.UserID,
-	}
+	k.Auth.Accesskey = "access_key"
+	k.Auth.SecretKey = "secret_key"
 
-	credential, err := credentials.Create(identity, &credentialOpts).Extract()
+	allPages, err := credentials.List(identity, nil).AllPages()
+	log.Printf("allPages: %s, err:%v", allPages, err)
+
+	Credentials, err := credentials.ExtractCredentials(allPages)
+	log.Printf("Credentials: %s, err:%v", Credentials, err)
+
 	if err != nil {
-		log.Printf("cannot create credential, err:%v, CreateOpts:%+v\n", err, credentialOpts)
 		return err
 	}
-	log.Printf("credential:%v", err, credential)
+
+	blob := getBlob(Credentials, "access_key")
+
+	if blob == nil {
+		credentialOpts := credentials.CreateOpts{
+			Blob:      "{\"access\":\"access_key\",\"secret\":\"secret_key\"}",
+			ProjectID: project.ID,
+			Type:      "ec2",
+			UserID:    k.Auth.UserID,
+		}
+
+		credential, err := credentials.Create(identity, &credentialOpts).Extract()
+		if err != nil {
+			log.Printf("cannot create credential, err:%v, CreateOpts:%+v\n", err, credentialOpts)
+			return err
+		}
+		log.Printf("credential:%v", err, credential)
+	}
 
 	return nil
 }

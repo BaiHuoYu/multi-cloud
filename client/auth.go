@@ -67,6 +67,8 @@ type KeystoneAuthOptions struct {
 	TenantName       string
 	AllowReauth      bool
 	TokenID          string
+	Accesskey        string
+	SecretKey        string
 }
 
 // GetTenantID Get TenantId
