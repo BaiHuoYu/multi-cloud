@@ -28,6 +28,7 @@ import (
 	"github.com/astaxie/beego/httplib"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/gophercloud/gophercloud/openstack/identity/v3/credentials"
 	"github.com/gophercloud/gophercloud/openstack/identity/v3/tokens"
 	"github.com/opensds/multi-cloud/api/pkg/model"
 	"github.com/opensds/multi-cloud/api/pkg/utils"
@@ -212,7 +213,7 @@ func (*receiver) Recv(url string, method string, headers HeaderOption,
 // NewKeystoneReciver implementation
 func NewKeystoneReciver(auth *KeystoneAuthOptions) Receiver {
 	k := &KeystoneReciver{Auth: auth}
-	err := k.GetToken()
+	err := k.GetTokenAndCredential()
 	if err != nil {
 		log.Printf("Failed to get token: %v", err)
 	}
@@ -225,7 +226,7 @@ type KeystoneReciver struct {
 }
 
 // GetToken implementation
-func (k *KeystoneReciver) GetToken() error {
+func (k *KeystoneReciver) GetTokenAndCredential() error {
 	opts := gophercloud.AuthOptions{
 		IdentityEndpoint: k.Auth.IdentityEndpoint,
 		Username:         k.Auth.Username,
@@ -259,6 +260,21 @@ func (k *KeystoneReciver) GetToken() error {
 	}
 	k.Auth.TenantID = project.ID
 	k.Auth.TokenID = token.ID
+
+	credentialOpts := credentials.CreateOpts{
+		Blob:      "{\"access\":\"181920\",\"secret\":\"secretKey\"}",
+		ProjectID: project.ID,
+		Type:      "ec2",
+		UserID:    k.Auth.UserID,
+	}
+
+	credential, err := credentials.Create(identity, &credentialOpts).Extract()
+	if err != nil {
+		log.Printf("cannot create credential, err:%v, CreateOpts:%+v\n", err, credentialOpts)
+		return err
+	}
+	log.Printf("credential:%v", err, credential)
+
 	return nil
 }
 
@@ -270,7 +286,7 @@ func (k *KeystoneReciver) Recv(url string, method string, headers HeaderOption,
 		if retryIdx > 0 {
 			err, ok := lastErr.(*HTTPError)
 			if ok && err.Code == http.StatusUnauthorized {
-				err := k.GetToken()
+				err := k.GetTokenAndCredential()
 				if err != nil {
 					log.Printf("Failed to get token: %v", err)
 				}
