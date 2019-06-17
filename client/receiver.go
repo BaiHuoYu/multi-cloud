@@ -344,11 +344,12 @@ func (k *KeystoneReciver) GetTokenAndCredential() error {
 	}
 
 	blob := getBlob(Credentials, k.Auth.Accesskey)
+	log.Printf("blob: %+v", blob)
 
 	if blob == nil {
-		fmt.Sprintf("{\"access\":\"%s\",\"secret\":\"%s\"}", k.Auth.Accesskey, k.Auth.SecretKey)
+		blobStr := fmt.Sprintf("{\"access\":\"%s\",\"secret\":\"%s\"}", k.Auth.Accesskey, k.Auth.SecretKey)
 		credentialOpts := credentials.CreateOpts{
-			Blob:      "{\"access\":\"access_key\",\"secret\":\"secret_key\"}",
+			Blob:      blobStr,
 			ProjectID: project.ID,
 			Type:      "ec2",
 			UserID:    k.Auth.UserID,
